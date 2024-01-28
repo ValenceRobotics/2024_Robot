@@ -57,6 +57,29 @@ public class DriveSubsystem extends SubsystemBase {
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
 
+  private boolean fieldRelative;
+  private boolean slowMode = false;
+
+  public DriveSubsystem(boolean fieldRelative) {
+    this.fieldRelative = fieldRelative;
+  }
+
+  public boolean getFieldRelative() {
+    return fieldRelative;
+  }
+
+  public void setFieldRelative(boolean fieldRelative) {
+    this.fieldRelative = fieldRelative;
+  }
+
+  public boolean getSlowMode() {
+    return slowMode;
+  }
+
+  public void setSlowMode(boolean slowMode) {
+    this.slowMode = slowMode;
+  }
+
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
@@ -89,6 +112,18 @@ public class DriveSubsystem extends SubsystemBase {
         });
 
     SmartDashboard.putNumber("Drivetrain/Gyro", m_gyro.getRotation2d().getDegrees());
+
+    double loggingState[] = {
+      m_frontLeft.getState().angle.getDegrees(), m_frontLeft.getState().speedMetersPerSecond,
+      m_frontRight.getState().angle.getDegrees(), m_frontRight.getState().speedMetersPerSecond,
+      m_rearLeft.getState().angle.getDegrees(), m_rearLeft.getState().speedMetersPerSecond,
+      m_rearRight.getState().angle.getDegrees(), m_rearRight.getState().speedMetersPerSecond,
+    };
+
+    SmartDashboard.putNumberArray("SwerveModuleStates", loggingState);
+
+    
+
   }
 
   /**

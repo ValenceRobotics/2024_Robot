@@ -19,12 +19,14 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.drive.SetSlowMode;
 import java.util.List;
 
 /*
@@ -50,15 +52,13 @@ public class RobotContainer {
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getRawAxis(1), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRawAxis(0), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRawAxis(2), OIConstants.kDriveDeadband),
-                true, true),
-            m_robotDrive));
+            new SwerveDrive(m_robotDrive,
+                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+                            OIConstants.kDriveDeadband),
+                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+                            OIConstants.kDriveDeadband),
+                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(3),
+                            OIConstants.kDriveDeadband)));
   }
 
   /**
@@ -71,13 +71,17 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
+    new JoystickButton(m_driverController, 1)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
 
-    new JoystickButton(m_driverController, 9).onTrue(new InstantCommand(m_robotDrive::resetGyro));
+    new JoystickButton(m_driverController, 10).onTrue(new InstantCommand(m_robotDrive::resetGyro));
+
+    new JoystickButton(m_driverController, 5)
+    .whileTrue(new SetSlowMode(m_robotDrive, true))
+    .whileFalse(new SetSlowMode(m_robotDrive, false));
 
   }
 
