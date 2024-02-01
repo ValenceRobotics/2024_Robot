@@ -77,9 +77,9 @@ public class RobotContainer {
             m_robotDrive));
 
 
-    new JoystickButton(m_driverController, 10).onTrue(new InstantCommand(m_robotDrive::resetGyro));
+    new JoystickButton(m_driverController, 12).onTrue(new InstantCommand(m_robotDrive::resetGyro));
 
-    new JoystickButton(m_driverController, 5)
+    new JoystickButton(m_driverController, 2)
     .whileTrue(new SetSlowMode(m_robotDrive, true))
     .whileFalse(new SetSlowMode(m_robotDrive, false));
 
