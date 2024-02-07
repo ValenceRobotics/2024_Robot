@@ -35,22 +35,22 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class PoseEstimator extends SubsystemBase {
-    //private AprilTagFieldLayout layout;
+    private AprilTagFieldLayout layout;
     private PhotonCamera cam;
-    // private Transform3d robotToCam;
-    // private PhotonPoseEstimator poseEstimator;
+    private Transform3d robotToCam;
+    private PhotonPoseEstimator poseEstimator;
     // private ArrayList<Pair<PhotonCamera, Transform3d>> camList;
 
     // private final Supplier<Rotation2d> rotationSupplier;
     // private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
     // private final SwerveDrivePoseEstimator swervePoseEstimator;
   
-    // private Pose3d pose;
+    private Pose3d pose;
   
-    // private double x;
-    // private double y;
-    // private double z;
-    // private Rotation2d heading;
+    private double x;
+    private double y;
+    private double z;
+    private Rotation2d heading;
 
 
     public PoseEstimator() {
@@ -91,21 +91,13 @@ public class PoseEstimator extends SubsystemBase {
         //     z = pose3d.getZ();
         //     heading = rotation3d.toRotation2d();
 
-        var result = cam.getLatestResult();
-        if (result.hasTargets()) {
-            PhotonTrackedTarget target = result.getBestTarget();
-            Transform3d pose = target.getBestCameraToTarget();
             
-        
-      
-            SmartDashboard.putNumber("PoseEstimator/X", pose.getX());
-            SmartDashboard.putNumber("PoseEstimator/Y", pose.getY());
-            SmartDashboard.putNumber("PoseEstimator/Z", pose.getZ());
-            SmartDashboard.putNumber("PoseEstimator/test", 38);
-            //SmartDashboard.putNumber("Drivetrain/Heading", heading.getDegrees());
-          }
-        }
-        
+        //     SmartDashboard.putNumber("PoseEstimator/Heading", heading.getDegrees());
+        //     SmartDashboard.putNumber("PoseEstimator/X", x);
+        // }
+        SmartDashboard.putNumber("PoseEstimator/test", 38);
+
+    }
       
         // public double getX(){
         //   return x;
@@ -128,6 +120,6 @@ public class PoseEstimator extends SubsystemBase {
         // }
       
     }
-    
+
 
 
