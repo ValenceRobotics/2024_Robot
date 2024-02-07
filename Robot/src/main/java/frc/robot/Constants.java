@@ -26,8 +26,8 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
   public static class ManipulatorConstants {
-    public static final int shooterMotor1Id = 15;
-    public static final int shooterMotor2Id = 21;
+    public static final int shooterMotor1Id = 18;
+    public static final int shooterMotor2Id = 19;
     public static final int feederMotor1Id = 0;
     public static final int feederMotor2Id = 0;
     public static final double shooterPower = 0.3;

@@ -28,13 +28,13 @@ public class Intake extends Command {
   @Override
   public void initialize() {
     m_Manipulator.setShooterPower(0);
-    // SmartDashboard.putNumber("Manipulator/Intake", 0);
+    //SmartDashboard.putNumber("Manipulator/Intake", 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Manipulator.setShooterPower(-SmartDashboard.getNumber("Manipulator/Intake", 0));
+    m_Manipulator.setShooterPower(SmartDashboard.getNumber("Manipulator/Intake", 0));
   }
 
   // Called once the command ends or is interrupted.

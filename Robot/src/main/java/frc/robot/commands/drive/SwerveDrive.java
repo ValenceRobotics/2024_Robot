@@ -49,7 +49,7 @@ public class SwerveDrive extends Command {
     }
 
     //raw = 0.7*raw + 0.3*(Math.pow(raw, 3));
-    return raw/1.25;
-    // return raw;
+    //return raw/1.25;
+    return raw;
   }
 }

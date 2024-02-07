@@ -34,6 +34,14 @@ public class Manipulator extends SubsystemBase {
     shooterMotor2.set(power);
   }
 
+  public void setLeftPower(double power) {
+    shooterMotor1.set(power);
+  }
+
+  public void setRightPower(double power) {
+    shooterMotor2.set(power);
+  }
+
 //   public void setFeederPower(double power) {
 //     feederMotor1.set(power);
 //     feederMotor2.set(power);
@@ -46,6 +54,7 @@ public class Manipulator extends SubsystemBase {
     controller.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
     controller.setInverted(isInverted);
+
     return controller;
 }
 

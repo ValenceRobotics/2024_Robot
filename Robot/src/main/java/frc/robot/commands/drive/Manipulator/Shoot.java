@@ -27,14 +27,19 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_Manipulator.setShooterPower(0);
-    // SmartDashboard.putNumber("Manipulator/Power", 0);
+    m_Manipulator.setLeftPower(0);
+    m_Manipulator.setRightPower(0);
+    //SmartDashboard.putNumber("Manipulator/LeftPower", 0);
+    //SmartDashboard.putNumber("Manipulator/RightPower", 0);
+
+    //SmartDashboard.putNumber("Manipulator/Power", 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Manipulator.setShooterPower(SmartDashboard.getNumber("Manipulator/Power", 0));
+    m_Manipulator.setLeftPower(SmartDashboard.getNumber("Manipulator/LeftPower", 0));
+    m_Manipulator.setRightPower(SmartDashboard.getNumber("Manipulator/RightPower", 0));
   }
 
   // Called once the command ends or is interrupted.

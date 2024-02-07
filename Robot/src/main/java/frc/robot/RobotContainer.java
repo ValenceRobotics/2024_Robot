@@ -24,6 +24,7 @@ import frc.robot.commands.drive.Manipulator.Intake;
 import frc.robot.commands.drive.Manipulator.Shoot;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Manipulator;
+import frc.robot.subsystems.PoseEstimator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -43,13 +44,14 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final Manipulator m_Manipulator = new Manipulator();
+  //private final PoseEstimator m_PoseEstimator = new PoseEstimator();
 
 
   // The driver's controller
   //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
     Joystick m_driverController = new Joystick(0);
 
-    private final CommandXboxController m_OperatorController = new CommandXboxController(1);
+    CommandXboxController m_OperatorController = new CommandXboxController(1);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -67,6 +69,8 @@ public class RobotContainer {
                             OIConstants.kDriveDeadband),
                     () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(3),
                             OIConstants.kDriveDeadband)));
+
+    //m_PoseEstimator.setDefaultCommand(new InstantCommand());
   }
 
   /**
@@ -92,8 +96,8 @@ public class RobotContainer {
     .whileFalse(new SetSlowMode(m_robotDrive, false));
 
 
-    m_OperatorController.rightBumper().toggleOnTrue(new Shoot(m_Manipulator));
-    m_OperatorController.leftBumper().toggleOnTrue(new Intake(m_Manipulator));
+    m_OperatorController.leftBumper().toggleOnTrue(new Shoot(m_Manipulator));
+    m_OperatorController.rightBumper().toggleOnTrue(new Intake(m_Manipulator));
 
   }
 
