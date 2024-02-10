@@ -39,7 +39,7 @@ public class PoseEstimator extends SubsystemBase {
     private PhotonCamera cam;
     private Transform3d robotToCam;
     private PhotonPoseEstimator poseEstimator;
-    // private ArrayList<Pair<PhotonCamera, Transform3d>> camList;
+    private ArrayList<Pair<PhotonCamera, Transform3d>> camList;
 
     // private final Supplier<Rotation2d> rotationSupplier;
     // private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
@@ -55,11 +55,11 @@ public class PoseEstimator extends SubsystemBase {
 
     public PoseEstimator() {
 
-        cam = new PhotonCamera("Microsoft_LifeCam_HD-3000");
+        cam = new PhotonCamera("USB_Camera");
         //to configure
-        //robotToCam = new Transform3d(new Translation3d(0, 0.0, 0), new Rotation3d(0,0,0));
-        // camList = new ArrayList<>();
-        // camList.add(new Pair<PhotonCamera, Transform3d>(cam, robotToCam));
+        robotToCam = new Transform3d(new Translation3d(0, 0.0, 0), new Rotation3d(0,0,0));
+        camList = new ArrayList<>();
+        camList.add(new Pair<PhotonCamera, Transform3d>(cam, robotToCam));
 
         // poseEstimator = new SwerveDrivePoseEstimator(
         // DrivetrainConstants.KINEMATICS,
@@ -69,55 +69,60 @@ public class PoseEstimator extends SubsystemBase {
     
        
         // try {
-        //   layout = AprilTagFieldLayout.loadFromResource(String.valueOf(AprilTagFields.kDefaultField));
+        //   layout = AprilTagFieldLayout.loadFromResource(String.valueOf(AprilTagFields.k2024Crescendo));
         // } catch (IOException e) {
         //   e.printStackTrace();
-        // }
+        // }s
+
+        layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     
         // poseEstimator = new RobotPoseEstimator(layout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camList);
-        //poseEstimator = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cam, robotToCam);
+        poseEstimator = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cam, robotToCam);
     }
 
         @Override
         public void periodic() {
-        //   Optional<EstimatedRobotPose> pose = poseEstimator.update();
+          Optional<EstimatedRobotPose> pose = poseEstimator.update();
+        // public Optional<EstimatedRobotPose> getEstimatedGlobalPoe
           
-        //   if(pose.isPresent()){
-        //     Pose3d pose3d = pose.get().estimatedPose;
-        //     this.pose = pose3d;
-        //     Rotation3d rotation3d = pose3d.getRotation();
-        //     x = pose3d.getX();
-        //     y = pose3d.getY();
-        //     z = pose3d.getZ();
-        //     heading = rotation3d.toRotation2d();
+          if(pose.isPresent()){
+            Pose3d pose3d = pose.get().estimatedPose;
+            this.pose = pose3d;
+            Rotation3d rotation3d = pose3d.getRotation();
+            x = pose3d.getX();
+            y = pose3d.getY();
+            z = pose3d.getZ();
+            heading = rotation3d.toRotation2d();
 
             
-        //     SmartDashboard.putNumber("PoseEstimator/Heading", heading.getDegrees());
-        //     SmartDashboard.putNumber("PoseEstimator/X", x);
-        // }
+            SmartDashboard.putNumber("PoseEstimator/Heading", heading.getDegrees());
+            SmartDashboard.putNumber("PoseEstimator/X", x);
+            SmartDashboard.putNumber("PoseEstimator/Y", y);
+            SmartDashboard.putNumber("PoseEstimator/Z", z);
+        }
         SmartDashboard.putNumber("PoseEstimator/test", 38);
 
     }
       
-        // public double getX(){
-        //   return x;
-        // }
+        public double getX(){
+          return x;
+        }
       
-        // public double getY(){
-        //   return y;
-        // }
+        public double getY(){
+          return y;
+        }
       
-        // public double getZ(){
-        //   return z;
-        // }
+        public double getZ(){
+          return z;
+        }
       
-        // public Rotation2d getHeading(){
-        //   return heading;
-        // }
+        public Rotation2d getHeading(){
+          return heading;
+        }
       
-        // public Pose3d getPose(){
-        //   return this.pose;
-        // }
+        public Pose3d getPose(){
+          return this.pose;
+        }
       
     }
 

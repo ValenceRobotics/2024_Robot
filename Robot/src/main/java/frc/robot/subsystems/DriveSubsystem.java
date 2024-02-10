@@ -111,6 +111,12 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
 
+    Pose2d pose = m_odometry.getPoseMeters();
+
+    SmartDashboard.putNumber("Drivetrain/X", pose.getX());
+    SmartDashboard.putNumber("Drivetrain/Y", pose.getY());
+    SmartDashboard.putNumber("Drivetrain/Heading", pose.getRotation().getDegrees());
+
     SmartDashboard.putNumber("Drivetrain/Gyro", m_gyro.getRotation2d().getDegrees());
 
     double loggingState[] = {

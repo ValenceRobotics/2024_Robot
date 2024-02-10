@@ -46,8 +46,8 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final Manipulator m_Manipulator = new Manipulator();
-  //private final PoseEstimator m_PoseEstimator = new PoseEstimator();
-  private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
+  private final PoseEstimator m_PoseEstimator = new PoseEstimator();
+  //private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
 
 
   // The driver's controller
@@ -102,7 +102,7 @@ public class RobotContainer {
     m_OperatorController.leftBumper().toggleOnTrue(new Shoot(m_Manipulator));
     m_OperatorController.rightBumper().toggleOnTrue(new Intake(m_Manipulator));
 
-    m_OperatorController.a().toggleOnTrue(new GetCameraPose(m_AprilTagCamera));
+    //m_OperatorController.a().toggleOnTrue(new GetCameraPose(m_AprilTagCamera));
 
   }
 

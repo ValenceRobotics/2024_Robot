@@ -13,12 +13,13 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AprilTagCamera extends SubsystemBase {
 
  
-  PhotonCamera camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
+  PhotonCamera camera = new PhotonCamera("USB_Camera");
 
   private double pitch = 0;
   private double yaw = 0;
@@ -30,14 +31,21 @@ public class AprilTagCamera extends SubsystemBase {
 
   @Override
   public void periodic() {
-  //   var result = camera.getLatestResult();
-  //   if(result.hasTargets()){
-  //     var bestTarget = result.getBestTarget();
-  //     target = bestTarget;
-  //     pitch = bestTarget.getPitch();
-  //     yaw = bestTarget.getYaw();
-  //     skew = bestTarget.getSkew();
-  //   }
+    var result = camera.getLatestResult();
+    SmartDashboard.putBoolean("Camera/HasTarget", result.hasTargets());
+    if(result.hasTargets()){
+      var bestTarget = result.getBestTarget();
+      SmartDashboard.putNumber("Camera/Tag ID", bestTarget.getFiducialId());
+      SmartDashboard.putNumber("Camera/Pose Ambuguity", bestTarget.getPoseAmbiguity());
+      target = bestTarget;
+      Transform3d camToTag = bestTarget.getBestCameraToTarget();
+      SmartDashboard.putNumber("Camera/X", camToTag.getX());
+      SmartDashboard.putNumber("Camera/Y", camToTag.getY());
+      SmartDashboard.putNumber("Camera/Z", camToTag.getZ());
+      pitch = bestTarget.getPitch();
+      yaw = bestTarget.getYaw();
+      skew = bestTarget.getSkew();
+    }
    }
 
   public double getPitch() {
