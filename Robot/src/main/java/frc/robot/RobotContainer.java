@@ -20,8 +20,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.drive.SwerveDrive;
-import frc.robot.commands.drive.Manipulator.Intake;
-import frc.robot.commands.drive.Manipulator.Shoot;
+import frc.robot.commands.drive.Vision.GetCameraPose;
 import frc.robot.subsystems.AprilTagCamera;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Manipulator;
@@ -32,10 +31,11 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.Vision.GetCameraPose;
+import frc.robot.commands.Manipulator.Intake;
+import frc.robot.commands.Manipulator.Shoot;
 import frc.robot.commands.drive.SetSlowMode;
 import java.util.List;
-
+ 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
