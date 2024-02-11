@@ -120,10 +120,10 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Drivetrain/Gyro", m_gyro.getRotation2d().getDegrees());
 
     double loggingState[] = {
-      m_frontLeft.getState().angle.getDegrees(), m_frontLeft.getState().speedMetersPerSecond,
-      m_frontRight.getState().angle.getDegrees(), m_frontRight.getState().speedMetersPerSecond,
-      m_rearLeft.getState().angle.getDegrees(), m_rearLeft.getState().speedMetersPerSecond,
-      m_rearRight.getState().angle.getDegrees(), m_rearRight.getState().speedMetersPerSecond,
+    m_frontLeft.getState().speedMetersPerSecond,
+     m_frontRight.getState().speedMetersPerSecond,
+   m_rearLeft.getState().speedMetersPerSecond,
+    m_rearRight.getState().speedMetersPerSecond,
     };
 
     SmartDashboard.putNumberArray("SwerveModuleStates", loggingState);

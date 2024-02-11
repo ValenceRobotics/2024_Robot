@@ -70,7 +70,7 @@ public class RobotContainer {
                             OIConstants.kDriveDeadband),
                     () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
                             OIConstants.kDriveDeadband),
-                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(3),
+                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(4),
                             OIConstants.kDriveDeadband)));
 
     //m_PoseEstimator.setDefaultCommand(new InstantCommand());
