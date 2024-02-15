@@ -33,7 +33,7 @@ public class SwerveDrive extends Command {
       applyJoystickTransform(xSup.getAsDouble()),
        applyJoystickTransform(ySup.getAsDouble()), 
        applyJoystickTransform(rotSup.getAsDouble()), 
-       dt.getFieldRelative(), 
+       true,
        true
       );
   }

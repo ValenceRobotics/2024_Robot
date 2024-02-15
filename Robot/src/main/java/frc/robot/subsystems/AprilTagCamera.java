@@ -66,4 +66,8 @@ public class AprilTagCamera extends SubsystemBase {
 
   }
 
+  public Transform3d getTargetToCam() {
+    return target.getBestCameraToTarget();
+  }
+
 }

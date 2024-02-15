@@ -20,6 +20,8 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.drive.SwerveDrive;
+import frc.robot.commands.drive.Vision.ChaseTagCmd;
+import frc.robot.commands.drive.Vision.ChaseTagRotCmd;
 import frc.robot.commands.drive.Vision.GetCameraPose;
 import frc.robot.subsystems.AprilTagCamera;
 import frc.robot.subsystems.DriveSubsystem;
@@ -28,6 +30,7 @@ import frc.robot.subsystems.PoseEstimator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -47,7 +50,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final Manipulator m_Manipulator = new Manipulator();
   private final PoseEstimator m_PoseEstimator = new PoseEstimator();
-  //private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
+  private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
 
 
   // The driver's controller
@@ -101,6 +104,10 @@ public class RobotContainer {
 
     m_OperatorController.leftBumper().toggleOnTrue(new Shoot(m_Manipulator));
     m_OperatorController.rightBumper().toggleOnTrue(new Intake(m_Manipulator));
+
+
+    m_OperatorController.a().whileTrue(new ChaseTagRotCmd(m_robotDrive, m_AprilTagCamera));
+    //(new SequentialCommandGroup(new ChaseTagCmd(m_robotDrive, m_AprilTagCamera)).andThen(new ChaseTagRotCmd(m_robotDrive, m_AprilTagCamera)));
 
     //m_OperatorController.a().toggleOnTrue(new GetCameraPose(m_AprilTagCamera));
 
