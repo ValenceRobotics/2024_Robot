@@ -147,6 +147,9 @@ public class DriveSubsystem extends SubsystemBase {
 
     Pose2d pose = m_odometry.getPoseMeters();
 
+    SmartDashboard.putString("Pose2D Pose: ", pose.toString());
+
+
     SmartDashboard.putNumber("Drivetrain/X", pose.getX());
     SmartDashboard.putNumber("Drivetrain/Y", pose.getY());
     SmartDashboard.putNumber("Drivetrain/Heading", pose.getRotation().getDegrees());
