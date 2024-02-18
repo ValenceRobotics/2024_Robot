@@ -37,6 +37,11 @@ public final class Constants {
     public static final CurrentLimitsConfigs CURRENT_LIMIT = new CurrentLimitsConfigs().withStatorCurrentLimit(80);
    }
 
+  public static final class ClimberConstants {
+    public static final int climbMotor1Id = 0;
+    public static final int climbMotor2Id = 0;
+   }
+
   public static class IntakeFeederConstants {
     public static final int intakeMotorId = 0;
     public static final int feederMotor1Id = 0;
