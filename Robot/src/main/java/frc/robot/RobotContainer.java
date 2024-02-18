@@ -20,17 +20,14 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.drive.SwerveDrive;
-import frc.robot.commands.drive.Vision.ChaseTagCmd;
-import frc.robot.commands.drive.Vision.ChaseTagRotCmd;
 import frc.robot.commands.drive.Vision.GetCameraPose;
 import frc.robot.subsystems.AprilTagCamera;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Manipulator;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PoseEstimator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -38,8 +35,6 @@ import frc.robot.commands.Manipulator.Intake;
 import frc.robot.commands.Manipulator.Shoot;
 import frc.robot.commands.drive.SetSlowMode;
 import java.util.List;
-
-import com.pathplanner.lib.commands.PathPlannerAuto;
  
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -50,9 +45,9 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 public class RobotContainer {
   // The robot's subsystems
   public static final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final Manipulator m_Manipulator = new Manipulator();
+  private final ShooterSubsystem m_Shooter = new ShooterSubsystem();
   private final PoseEstimator m_PoseEstimator = new PoseEstimator();
-  private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
+  //private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
 
 
   // The driver's controller
@@ -75,7 +70,7 @@ public class RobotContainer {
                             OIConstants.kDriveDeadband),
                     () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
                             OIConstants.kDriveDeadband),
-                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(4),
+                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(2),
                             OIConstants.kDriveDeadband)));
 
     //m_PoseEstimator.setDefaultCommand(new InstantCommand());
@@ -99,17 +94,13 @@ public class RobotContainer {
 
     new JoystickButton(m_driverController, 12).onTrue(new InstantCommand(m_robotDrive::resetGyro));
 
-    new JoystickButton(m_driverController, 2)
+    new JoystickButton(m_driverController,2)
     .whileTrue(new SetSlowMode(m_robotDrive, true))
     .whileFalse(new SetSlowMode(m_robotDrive, false));
 
 
-    m_OperatorController.leftBumper().toggleOnTrue(new Shoot(m_Manipulator));
-    m_OperatorController.rightBumper().toggleOnTrue(new Intake(m_Manipulator));
-
-
-    m_OperatorController.a().whileTrue(new ChaseTagRotCmd(m_robotDrive, m_AprilTagCamera));
-    //(new SequentialCommandGroup(new ChaseTagCmd(m_robotDrive, m_AprilTagCamera)).andThen(new ChaseTagRotCmd(m_robotDrive, m_AprilTagCamera)));
+    m_OperatorController.leftBumper().toggleOnTrue(new Shoot(m_Shooter));
+    m_OperatorController.rightBumper().toggleOnTrue(new Intake(m_Shooter));
 
     //m_OperatorController.a().toggleOnTrue(new GetCameraPose(m_AprilTagCamera));
 
@@ -121,47 +112,43 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // // Create config for trajectory
-    // TrajectoryConfig config = new TrajectoryConfig(
-    //     AutoConstants.kMaxSpeedMetersPerSecond,
-    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-    //     // Add kinematics to ensure max speed is actually obeyed
-    //     .setKinematics(DriveConstants.kDriveKinematics);
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        AutoConstants.kMaxSpeedMetersPerSecond,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics);
 
-    // // An example trajectory to follow. All units in meters.
-    // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-    //     // Start at the origin facing the +X direction
-    //     new Pose2d(0, 0, new Rotation2d(0)),
-    //     // Pass through these two interior waypoints, making an 's' curve path
-    //     List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-    //     // End 3 meters straight ahead of where we started, facing forward
-    //     new Pose2d(3, 0, new Rotation2d(0)),
-    //     config);
+    // An example trajectory to follow. All units in meters.
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(3, 0, new Rotation2d(0)),
+        config);
 
-    // var thetaController = new ProfiledPIDController(
-    //     AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    // thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    var thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    // SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-    //     exampleTrajectory,
-    //     m_robotDrive::getPose, // Functional interface to feed supplier
-    //     DriveConstants.kDriveKinematics,
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+        exampleTrajectory,
+        m_robotDrive::getPose, // Functional interface to feed supplier
+        DriveConstants.kDriveKinematics,
 
-    //     // Position controllers
-    //     new PIDController(AutoConstants.kPXController, 0, 0),
-    //     new PIDController(AutoConstants.kPYController, 0, 0),
-    //     thetaController,
-    //     m_robotDrive::setModuleStates,
-    //     m_robotDrive);
+        // Position controllers
+        new PIDController(AutoConstants.kPXController, 0, 0),
+        new PIDController(AutoConstants.kPYController, 0, 0),
+        thetaController,
+        m_robotDrive::setModuleStates,
+        m_robotDrive);
 
-    // // Reset odometry to the starting pose of the trajectory.
-    // m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
-    // // Run path following command, then stop at the end.
-    // return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
-  
-  
-      return new PathPlannerAuto("Auto");
-
+    // Run path following command, then stop at the end.
+    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
   }
 }

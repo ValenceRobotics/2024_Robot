@@ -10,6 +10,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -25,13 +29,28 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
 
-  public static class ManipulatorConstants {
+  public static class ShooterConstants {
     public static final int shooterMotor1Id = 18;
     public static final int shooterMotor2Id = 19;
+    public static final double shooterPower = 0.3;
+    public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
+    public static final CurrentLimitsConfigs CURRENT_LIMIT = new CurrentLimitsConfigs().withStatorCurrentLimit(80);
+   }
+
+  public static class IntakeFeederConstants {
+    public static final int intakeMotorId = 0;
     public static final int feederMotor1Id = 0;
     public static final int feederMotor2Id = 0;
-    public static final double shooterPower = 0.3;
-   }
+  }
+
+  public static class PivotConstants {
+    public static final int pivotMotor1Id = 0;
+    public static final int pivotMotor2Id = 0;
+
+    public static final TrapezoidProfile.Constraints kPivotControllerConstraints = new TrapezoidProfile.Constraints(
+      0, 0);
+    
+  }
    
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of

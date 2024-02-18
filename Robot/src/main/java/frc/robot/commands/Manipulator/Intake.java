@@ -4,21 +4,21 @@
 
 package frc.robot.commands.Manipulator;
 
-import frc.robot.subsystems.Manipulator;
+import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class Intake extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Manipulator m_Manipulator;
+  private final ShooterSubsystem m_Manipulator;
 
   /**
    * Creates a new ExampleCommand.
    * 
    * @param subsystem The subsystem used by this command.
    */
-  public Intake(Manipulator manipulator) {
+  public Intake(ShooterSubsystem manipulator) {
     this.m_Manipulator = manipulator;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_Manipulator);

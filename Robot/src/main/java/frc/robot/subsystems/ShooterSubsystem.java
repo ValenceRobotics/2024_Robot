@@ -6,26 +6,33 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ManipulatorConstants;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterConstants;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkFlex;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Manipulator extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
 
-    private final CANSparkMax shooterMotor1;
-    private final CANSparkMax shooterMotor2;
-    //private final double shooterPower;
-    //private final CANSparkMax feederMotor1;
-    //private final CANSparkMax feederMotor2;
+    //private final CANSparkFlex shooterMotor1;
+    //private final CANSparkFlex shooterMotor2;
+    private final TalonFX shooterMotor1;
+    private final TalonFX shooterMotor2;
+    //ideally would want a velocity controller
 
 
-  public Manipulator() {
-    shooterMotor1 = createManipulatorController(ManipulatorConstants.shooterMotor1Id, false);
-    shooterMotor2 = createManipulatorController(ManipulatorConstants.shooterMotor2Id, true);
-    //feederMotor1 = createManipulatorController(ManipulatorConstants.feederMotor1Id, false);
-    //feederMotor2 = createManipulatorController(ManipulatorConstants.feederMotor2Id, false);
+
+
+  public ShooterSubsystem() {
+    //shooterMotor1 = createShooterController(ShooterConstants.shooterMotor1Id, false);
+    //shooterMotor2 = createShooterController(ShooterConstants.shooterMotor2Id, true);
+    shooterMotor1 = createFalconShooterController(ShooterConstants.shooterMotor1Id, false);
+    shooterMotor2 = createFalconShooterController(ShooterConstants.shooterMotor2Id, true);
+
+
 
   }
 
@@ -42,10 +49,7 @@ public class Manipulator extends SubsystemBase {
     shooterMotor2.set(power);
   }
 
-//   public void setFeederPower(double power) {
-//     feederMotor1.set(power);
-//     feederMotor2.set(power);
-//   }
+
 
   private CANSparkMax createManipulatorController(int port, boolean isInverted) {
     CANSparkMax controller = new CANSparkMax(port, MotorType.kBrushless);
@@ -56,6 +60,33 @@ public class Manipulator extends SubsystemBase {
     controller.setInverted(isInverted);
 
     return controller;
+}
+
+  private CANSparkFlex createShooterController(int port, boolean isInverted) {
+    CANSparkFlex controller = new CANSparkFlex(port, MotorType.kBrushless);
+    controller.restoreFactoryDefaults();
+
+    controller.setIdleMode(CANSparkFlex.IdleMode.kBrake);
+
+    controller.setInverted(isInverted);
+
+    return controller;
+  }
+
+  private TalonFX createFalconShooterController(int id, boolean invert) {
+    TalonFX shooterController = new TalonFX(id);
+    //shooterController.configFactoryDefault();
+
+    shooterController.setInverted(invert);
+    shooterController.setNeutralMode(ShooterConstants.NEUTRAL_MODE);
+    // shooterController.configSupplyCurrentLimit(ShooterConstants.CURRENT_LIMIT);
+
+    // shooterController.configOpenloopRamp(ShooterConstants.LONG_RAMP_RATE);
+    // shooterController.configClosedloopRamp(ShooterConstants.LONG_RAMP_RATE);
+    // shooterController.configVoltageCompSaturation(ShooterConstants.VOLTAGE_COMPENSATION);
+    //shooterController.enableVoltageCompensation(true);
+
+    return shooterController;
 }
 
   /**
