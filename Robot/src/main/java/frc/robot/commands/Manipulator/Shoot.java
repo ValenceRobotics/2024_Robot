@@ -5,6 +5,10 @@
 package frc.robot.commands.Manipulator;
 
 import frc.robot.subsystems.ShooterSubsystem;
+
+import java.util.List;
+
+import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -40,6 +44,32 @@ public class Shoot extends Command {
   public void execute() {
     m_Manipulator.setLeftPower(SmartDashboard.getNumber("Manipulator/LeftPower", 0));
     m_Manipulator.setRightPower(SmartDashboard.getNumber("Manipulator/RightPower", 0));
+
+    // speaker apriltags: 3,4,7,8
+/**/
+    AprilTagProcessor myAprilTagProcessor;
+    List<AprilTagDetection> myAprilTagDetections;  // list of all detections
+    AprilTagDetection myAprilTagDetection;         // current detection in for() loop
+    int myAprilTagIdCode;                           // ID code of current detection, in for() loop
+
+    // Get a list of AprilTag detections.
+    myAprilTagDetections = myAprilTagProcessor.getDetections();
+    // Cycle through through the list and process each AprilTag.
+    for (myAprilTagDetection : myAprilTagDetections) {
+      if (myAprilTagDetection.metadata != null) {  // This check for non-null Metadata is not needed for reading only ID code.
+        myAprilTagIdCode = myAprilTagDetection.id;
+        // Now take action based on this tag's ID code, or store info for later action.
+        switch (myAprilTagIdCode) {
+          case 3:
+          case 4:
+          case 7:
+          case 8:
+            m_Manipulator.setShooterPower(1.0);
+            break;
+        }
+      }
+    }
+/**/
   }
 
   // Called once the command ends or is interrupted.
