@@ -12,6 +12,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkFlex;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -21,6 +24,8 @@ public class ShooterSubsystem extends SubsystemBase {
     //private final CANSparkFlex shooterMotor2;
     private final TalonFX shooterMotor1;
     private final TalonFX shooterMotor2;
+    private final PIDController shooterPid;
+    private final SimpleMotorFeedforward shooterFeedforward;
     //ideally would want a velocity controller
 
 
@@ -31,6 +36,10 @@ public class ShooterSubsystem extends SubsystemBase {
     //shooterMotor2 = createShooterController(ShooterConstants.shooterMotor2Id, true);
     shooterMotor1 = createFalconShooterController(ShooterConstants.shooterMotor1Id, false);
     shooterMotor2 = createFalconShooterController(ShooterConstants.shooterMotor2Id, true);
+    shooterPid = new PIDController(0, 0, 0);
+    shooterFeedforward = new SimpleMotorFeedforward(0, 0);
+
+
 
 
 
@@ -47,6 +56,23 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setRightPower(double power) {
     shooterMotor2.set(power);
+  }
+
+
+  public void setShooterVelocity(double velocity) {
+    double feedVelocity = shooterFeedforward.calculate(velocity);
+    double pidVelocity1 = shooterPid.calculate(getTopVelocityRPM(), velocity);
+    double pidVelocity2 = shooterPid.calculate(getBottomVelocityRPM(), velocity);
+    shooterMotor1.setVoltage(feedVelocity + pidVelocity1);
+    shooterMotor2.setVoltage(feedVelocity + pidVelocity2);
+  }
+
+  public double getTopVelocityRPM() {
+    return shooterMotor1.get() * ShooterConstants.vortexRPM;
+  }
+
+  public double getBottomVelocityRPM() {
+    return shooterMotor2.get() * ShooterConstants.vortexRPM;
   }
 
 

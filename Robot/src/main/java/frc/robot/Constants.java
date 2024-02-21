@@ -35,6 +35,7 @@ public final class Constants {
     public static final double shooterPower = 0.3;
     public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
     public static final CurrentLimitsConfigs CURRENT_LIMIT = new CurrentLimitsConfigs().withStatorCurrentLimit(80);
+    public static final int vortexRPM = 6784;
    }
 
   public static final class ClimberConstants {
@@ -53,7 +54,9 @@ public final class Constants {
     public static final int pivotMotor2Id = 0;
 
     public static final TrapezoidProfile.Constraints kPivotControllerConstraints = new TrapezoidProfile.Constraints(
-      0, 0);
+      0.5, 0);
+    
+    public static final double positionOffset = 0;
     
   }
    

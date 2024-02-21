@@ -43,14 +43,10 @@ public class IntakeFeederSubsystem extends SubsystemBase {
     feederMotor2.set(power);
   }
 
-  public void setLeftPower(double power) {
-    feederMotor1.set(power);
+  public void setIntakeFeederPower(double intakePower, double feederPower) {
+    intakeMotor.set(intakePower);
+    setFeederPower(feederPower);
   }
-
-  public void setRightPower(double power) {
-    feederMotor2.set(power);
-  }
-
 
 
   private CANSparkMax createIntakeFeederController(int port, boolean isInverted) {

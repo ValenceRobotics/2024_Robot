@@ -10,7 +10,9 @@ import frc.robot.Constants.PivotConstants;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PivotSubsystem extends SubsystemBase {
@@ -19,6 +21,9 @@ public class PivotSubsystem extends SubsystemBase {
     private final CANSparkMax pivotMotor1;
     private final CANSparkMax pivotMotor2;
     private final ProfiledPIDController pivotController;
+    private final ArmFeedforward pivotFeedforward;
+    private final DutyCycleEncoder absEncoder;
+    private final double pivotVelocity;
     //abs encoder
     //possible feedforward?
 
@@ -26,20 +31,25 @@ public class PivotSubsystem extends SubsystemBase {
     pivotMotor1 = createPivotController(PivotConstants.pivotMotor1Id, false);
     pivotMotor2 = createPivotController(PivotConstants.pivotMotor2Id, true);
     pivotController = new ProfiledPIDController(0, 0, 0, PivotConstants.kPivotControllerConstraints);
-    //abs encoder
-    //possible feedforward?
-
+    pivotFeedforward = new ArmFeedforward(0, 0, 0);
+    absEncoder = new DutyCycleEncoder(0);
+    absEncoder.setPositionOffset(PivotConstants.positionOffset);
+    pivotVelocity = 0.5;
 
   }
 
 
   //set position method
   //get position method
-  //set voltage method
   
   public void setPivotPosition(double position) {
-    //double output = pivotController.calculate(getPosition(), position)
-    //setPivotPower/Voltage(output)
+    double pivotFeed = pivotFeedforward.calculate(position, pivotVelocity);
+    double pidFeed = pivotController.calculate(getPivotPosition(), position);
+    setPivotVolts(pivotFeed + pidFeed);
+  }
+
+  public double getPivotPosition() {
+    return (absEncoder.getAbsolutePosition()-absEncoder.getPositionOffset()) * 2 * Math.PI;
   }
 
 
@@ -47,6 +57,11 @@ public class PivotSubsystem extends SubsystemBase {
   public void setPivotPower(double power) {
     pivotMotor1.set(power);
     pivotMotor2.set(power);
+  }
+
+  public void setPivotVolts(double voltage) {
+    pivotMotor1.setVoltage(voltage);
+    pivotMotor2.setVoltage(voltage);
   }
 
   public void setLeftPower(double power) {

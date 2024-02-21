@@ -26,15 +26,12 @@ public class ClimberSubsystem extends SubsystemBase {
     climbMotor2 = createClimberController(ClimberConstants.climbMotor2Id, false);
 
 
-
   }
 
 
 
 
-
-
-  public void setPivotPower(double power) {
+  public void setClimbPower(double power) {
     climbMotor1.set(power);
     climbMotor2.set(power);
   }
