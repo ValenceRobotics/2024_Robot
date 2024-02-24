@@ -6,12 +6,14 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterConstants;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkFlex;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -30,6 +32,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
 
+  private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
+    new SysIdRoutine.Config(),
+    new SysIdRoutine.Mechanism(
+    (voltage) -> this.setShooterVolts(voltage.in(Volts)),
+    null, // No log consumer, since data is recorded by URCL
+    this
+  ));
 
   public ShooterSubsystem() {
     //shooterMotor1 = createShooterController(ShooterConstants.shooterMotor1Id, false);
@@ -56,6 +65,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setRightPower(double power) {
     shooterMotor2.set(power);
+  }
+
+  public void setShooterVolts(double volts) {
+    shooterMotor1.setVoltage(volts);
+    shooterMotor2.setVoltage(volts);
   }
 
 
@@ -114,6 +128,19 @@ public class ShooterSubsystem extends SubsystemBase {
 
     return shooterController;
 }
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.quasistatic(direction);
+  }
+
+/**
+ * Returns a command that will execute a dynamic test in the given direction.
+ *
+ * @param direction The direction (forward or reverse) to run the test in
+ */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.dynamic(direction);
+  }
 
   /**
    * Example command factory method.

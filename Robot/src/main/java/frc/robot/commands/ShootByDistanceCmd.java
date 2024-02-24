@@ -1,6 +1,9 @@
 package frc.robot.commands;
 
 import java.util.function.Supplier;
+
+import javax.xml.crypto.dsig.Transform;
+
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -22,7 +25,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class AimToSpeakerCmd extends Command {
+public class ShootByDistanceCmd extends Command {
 
     private final DriveSubsystem dt;
     private final AprilTagCamera cam;
@@ -32,7 +35,7 @@ public class AimToSpeakerCmd extends Command {
 
 
 
-    public AimToSpeakerCmd(DriveSubsystem dt, AprilTagCamera cam, PivotSubsystem arm, ShooterSubsystem shooter) {
+    public ShootByDistanceCmd(DriveSubsystem dt, AprilTagCamera cam, PivotSubsystem arm, ShooterSubsystem shooter) {
         this.dt = dt;
         this.cam = cam;
         this.arm = arm;
@@ -40,15 +43,27 @@ public class AimToSpeakerCmd extends Command {
         addRequirements(dt, cam, arm, shooter);
     }
 
+    private static double sigmoid(double x) {
+    return 1 / (1 + Math.exp(-x));
+    }
+
     @Override
     public void initialize() {
+        Transform3d pose = cam.getTargetToCam();
+        double xDist = pose.getX();
+        double yDist = pose.getY();
+        double distance = (Math.sqrt((Math.pow(xDist, 2)) + (Math.pow(yDist, 3))));
+
+        //apply some function to distance
+        shooter.setShooterPower(sigmoid(distance));
+        arm.setPivotPosition(sigmoid(distance));
 
     }
 
   // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-      
+        
 
     }
 

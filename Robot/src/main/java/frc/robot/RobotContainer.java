@@ -34,10 +34,12 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.BareBonesAlignCmd;
+import frc.robot.commands.ShootByDistanceCmd;
 import frc.robot.commands.Manipulator.Intake;
-import frc.robot.commands.Manipulator.Shoot;
+import frc.robot.commands.Manipulator.Outtake;
 import frc.robot.commands.drive.SetSlowMode;
 import java.util.List;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
  
@@ -106,12 +108,17 @@ public class RobotContainer {
     .whileFalse(new SetSlowMode(m_robotDrive, false));
 
 
-    m_OperatorController.leftBumper().toggleOnTrue(new Shoot(m_IntakeFeederSubsystem));
+    m_OperatorController.leftBumper().toggleOnTrue(new Outtake(m_IntakeFeederSubsystem));
     m_OperatorController.rightBumper().toggleOnTrue(new Intake(m_Shooter, m_IntakeFeederSubsystem));
 
     
 
     m_OperatorController.a().whileTrue(new BareBonesAlignCmd(m_robotDrive, m_AprilTagCamera, m_PivotSubsystem, m_Shooter));
+    m_OperatorController.b().whileTrue(new ShootByDistanceCmd(m_robotDrive, m_AprilTagCamera, m_PivotSubsystem, m_Shooter));
+
+
+    m_OperatorController.x().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_OperatorController.y().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
   }
 

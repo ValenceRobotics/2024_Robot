@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class Shoot extends Command {
+public class Outtake extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final IntakeFeederSubsystem m_IntakeFeeder;
 
@@ -23,7 +23,7 @@ public class Shoot extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Shoot(IntakeFeederSubsystem intakeFeeder) {
+  public Outtake(IntakeFeederSubsystem intakeFeeder) {
     this.m_IntakeFeeder = intakeFeeder;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_IntakeFeeder);
