@@ -50,7 +50,7 @@ public class PivotPID extends Command {
   @Override
   public void execute() {
    if (m_Arm.getPivotPosition()>1.9) {
-    gravConst = 0.15;
+    gravConst = 0.12; // old 0.15
     m_Arm.setPivotPower((armController.calculate(m_Arm.getPivotPosition(), m_DoubleSupplier))+(gravConst*Math.cos(m_Arm.getPivotPosition()-0.1)));
 
 
