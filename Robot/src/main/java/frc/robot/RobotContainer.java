@@ -24,6 +24,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.subsystems.AprilTagCamera;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeFeederSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -37,6 +38,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.OpenLoopPivot;
 import frc.robot.commands.PivotPID;
+import frc.robot.commands.Climb.SetClimbLeftPower;
+import frc.robot.commands.Climb.SetClimbRightPower;
 import frc.robot.commands.Manipulator.Intake;
 import frc.robot.commands.Manipulator.Outtake;
 import frc.robot.commands.Manipulator.Shoot;
@@ -61,6 +64,7 @@ public class RobotContainer {
   private final IntakeFeederSubsystem m_IntakeFeederSubsystem = new IntakeFeederSubsystem();
   private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
   private final PivotSubsystem m_PivotSubsystem = new PivotSubsystem();
+  private final ClimberSubsystem m_Climber = new ClimberSubsystem();
 
   // Autonomous chooser
   private final SendableChooser<Command> m_autoChooser;
@@ -115,6 +119,17 @@ public class RobotContainer {
     .whileTrue(new SetSlowMode(m_robotDrive, true))
     .whileFalse(new SetSlowMode(m_robotDrive, false));
 
+    new JoystickButton(m_driverController, 5)
+      .whileTrue(new SetClimbLeftPower(m_Climber, 1));
+    
+    new JoystickButton(m_driverController, 9)
+      .whileTrue(new SetClimbLeftPower(m_Climber, -1));
+
+    new JoystickButton(m_driverController, 6)
+      .whileTrue(new SetClimbRightPower(m_Climber, 1));
+
+    new JoystickButton(m_driverController, 10)
+      .whileTrue(new SetClimbRightPower(m_Climber, -1));
 
     m_OperatorController.leftTrigger().whileTrue(new Shoot(m_Shooter));
     m_OperatorController.rightTrigger().whileTrue(new Intake(m_Shooter, m_IntakeFeederSubsystem));
@@ -131,6 +146,8 @@ public class RobotContainer {
     // m_OperatorController.y().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     m_OperatorController.x().whileTrue(new PivotPID(m_PivotSubsystem, 2.01));
+
+
 
   }
 
