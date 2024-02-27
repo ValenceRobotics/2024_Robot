@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,32 +16,35 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.drive.SwerveDrive;
-import frc.robot.commands.drive.Vision.GetCameraPose;
 import frc.robot.subsystems.AprilTagCamera;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeFeederSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.PoseEstimator;
+import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.BareBonesAlignCmd;
-import frc.robot.commands.ShootByDistanceCmd;
+import frc.robot.commands.OpenLoopPivot;
+import frc.robot.commands.PivotPID;
 import frc.robot.commands.Manipulator.Intake;
 import frc.robot.commands.Manipulator.Outtake;
+import frc.robot.commands.Manipulator.Shoot;
 import frc.robot.commands.drive.SetSlowMode;
 import java.util.List;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
  
 /*
@@ -58,6 +62,8 @@ public class RobotContainer {
   private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
   private final PivotSubsystem m_PivotSubsystem = new PivotSubsystem();
 
+  // Autonomous chooser
+  private final SendableChooser<Command> m_autoChooser;
 
   // The driver's controller
   //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -72,6 +78,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
+
+
     // Configure default commands
     m_robotDrive.setDefaultCommand(
             new SwerveDrive(m_robotDrive,
@@ -79,10 +87,13 @@ public class RobotContainer {
                             OIConstants.kDriveDeadband),
                     () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
                             OIConstants.kDriveDeadband),
-                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(2),
+                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(4),
                             OIConstants.kDriveDeadband)));
 
-    //m_PoseEstimator.setDefaultCommand(new InstantCommand());
+    m_PivotSubsystem.setDefaultCommand(new OpenLoopPivot(m_PivotSubsystem, () -> (-0.3 * m_OperatorController.getRawAxis(1))));
+    
+    m_autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", m_autoChooser);
   }
 
   /**
@@ -96,10 +107,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     new JoystickButton(m_driverController, 1)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
-
+        .whileTrue(new Outtake(m_IntakeFeederSubsystem));
 
     new JoystickButton(m_driverController, 12).onTrue(new InstantCommand(m_robotDrive::resetGyro));
 
@@ -108,17 +116,21 @@ public class RobotContainer {
     .whileFalse(new SetSlowMode(m_robotDrive, false));
 
 
-    m_OperatorController.leftBumper().toggleOnTrue(new Outtake(m_IntakeFeederSubsystem));
-    m_OperatorController.rightBumper().toggleOnTrue(new Intake(m_Shooter, m_IntakeFeederSubsystem));
+    m_OperatorController.leftTrigger().whileTrue(new Shoot(m_Shooter));
+    m_OperatorController.rightTrigger().whileTrue(new Intake(m_Shooter, m_IntakeFeederSubsystem));
+
+
 
     
 
-    m_OperatorController.a().whileTrue(new BareBonesAlignCmd(m_robotDrive, m_AprilTagCamera, m_PivotSubsystem, m_Shooter));
-    m_OperatorController.b().whileTrue(new ShootByDistanceCmd(m_robotDrive, m_AprilTagCamera, m_PivotSubsystem, m_Shooter));
+    // m_OperatorController.a().whileTrue(m_Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // m_OperatorController.b().whileTrue(m_Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
 
-    m_OperatorController.x().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    m_OperatorController.y().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // m_OperatorController.x().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // m_OperatorController.y().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    m_OperatorController.x().whileTrue(new PivotPID(m_PivotSubsystem, 2.01));
 
   }
 
@@ -127,6 +139,15 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+  private void configureAutoChooser() {
+        // Configure autonomous chooser with different auto paths
+        m_autoChooser.addOption("Auto Path 1", new PathPlannerAuto("Auto"));
+        m_autoChooser.addOption("Auto Path 2", new PathPlannerAuto("New Auto"));
+        // Add more paths as needed
+
+        // Put the chooser on the dashboard
+        SmartDashboard.putData("Auto Mode", m_autoChooser);
+    }
   public Command getAutonomousCommand() {
     // // Create config for trajectory
     // TrajectoryConfig config = new TrajectoryConfig(
@@ -166,7 +187,6 @@ public class RobotContainer {
 
     // // Run path following command, then stop at the end.
     // return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
-
-    return new PathPlannerAuto("Auto");
+    return m_autoChooser.getSelected();
   }
 }

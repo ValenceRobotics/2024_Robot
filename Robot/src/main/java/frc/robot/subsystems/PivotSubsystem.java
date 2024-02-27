@@ -7,9 +7,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.PivotConstants;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
+
 import static edu.wpi.first.units.Units.Volts;
 
 
@@ -26,9 +31,9 @@ public class PivotSubsystem extends SubsystemBase {
     private final CANSparkMax pivotMotor2;
     private final ProfiledPIDController pivotController;
     private final ArmFeedforward pivotFeedforward;
-    private final DutyCycleEncoder absEncoder;
+    private final AbsoluteEncoder absEncoder;
     private final double pivotVelocity;
-    private final PIDController pivotPIDController = new PIDController(5, 0, 0);
+    private final PIDController pivotPIDController = new PIDController(.5, 0, 0);
     //abs encoder
     //possible feedforward?
 
@@ -42,11 +47,13 @@ public class PivotSubsystem extends SubsystemBase {
 
   public PivotSubsystem() {
     pivotMotor1 = createPivotController(PivotConstants.pivotMotor1Id, false);
-    pivotMotor2 = createPivotController(PivotConstants.pivotMotor2Id, true);
+    pivotMotor2 = createPivotController(PivotConstants.pivotMotor2Id, false);
     pivotController = new ProfiledPIDController(0, 0, 0, PivotConstants.kPivotControllerConstraints);
     pivotFeedforward = new ArmFeedforward(0, 0, 0);
-    absEncoder = new DutyCycleEncoder(0);
-    absEncoder.setPositionOffset(PivotConstants.positionOffset);
+    absEncoder = pivotMotor2.getAbsoluteEncoder(Type.kDutyCycle);
+    //absEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
+    //absEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
+    //absEncoder.setPositionOffset(PivotConstants.positionOffset);
     pivotVelocity = 0.5;
 
   }
@@ -56,20 +63,20 @@ public class PivotSubsystem extends SubsystemBase {
   //get position method
   
   public void setPivotPosition(double position) {
-    double pivotFeed = pivotFeedforward.calculate(position, pivotVelocity);
+    //double pivotFeed = pivotFeedforward.calculate(position, pivotVelocity);
     double pidFeed = pivotController.calculate(getPivotPosition(), position);
-    setPivotVolts(pivotFeed + pidFeed);
+    setPivotPower(-pidFeed);
   }
 
   public double getPivotPosition() {
-    return (absEncoder.getAbsolutePosition()-absEncoder.getPositionOffset());
+    return absEncoder.getPosition() * 2* Math.PI;
   }
 
 
 
   public void setPivotPower(double power) {
     pivotMotor1.set(power);
-    pivotMotor2.set(power);
+    pivotMotor2.set(-power);
   }
 
   public void setPivotVolts(double voltage) {
@@ -137,6 +144,9 @@ public class PivotSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Pivot/Position", getPivotPosition());
+    SmartDashboard.putNumber("Pivot/Test", 39585);
+
     //SmartDashboard.putData(shooterPower);
     // This method will be called once per scheduler run
   }

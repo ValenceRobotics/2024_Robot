@@ -14,33 +14,33 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class Outtake extends Command {
+public class Shoot extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final IntakeFeederSubsystem m_IntakeFeeder;
+  private final ShooterSubsystem m_Shooter;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Outtake(IntakeFeederSubsystem intakeFeeder) {
-    this.m_IntakeFeeder = intakeFeeder;
+  public Shoot(ShooterSubsystem shooter) {
+    this.m_Shooter = shooter;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_IntakeFeeder);
+    addRequirements(m_Shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_IntakeFeeder.setFeederPower(0);
+    //.putNumber("Shooter/Top Power", 0);
+    //SmartDashboard.putNumber("Shooter/Bottom Power", 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    m_IntakeFeeder.setFeederPower(1);
-
+    m_Shooter.setShooterPower(SmartDashboard.getNumber("Shooter/Top Power", 0), SmartDashboard.getNumber("Shooter/Bottom Power", 0));
 //         // speaker apriltags: 3,4,7,8
 // /**/
 //     AprilTagProcessor myAprilTagProcessor;
@@ -71,8 +71,8 @@ public class Outtake extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_IntakeFeeder.setFeederPower(0);
-  }
+    m_Shooter.setShooterPower(0, 0);
+}
 
   // Returns true when the command should end.
   @Override

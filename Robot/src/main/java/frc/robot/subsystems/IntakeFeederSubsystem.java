@@ -19,15 +19,11 @@ public class IntakeFeederSubsystem extends SubsystemBase {
 
     private final CANSparkMax intakeMotor;
     private final CANSparkMax feederMotor1;
-    private final CANSparkMax feederMotor2;
 
 
   public IntakeFeederSubsystem() {
     intakeMotor = createIntakeFeederController(IntakeFeederConstants.intakeMotorId, false);
     feederMotor1 = createIntakeFeederController(IntakeFeederConstants.feederMotor1Id, false);
-    feederMotor2 = createIntakeFeederController(IntakeFeederConstants.feederMotor2Id, true);
-
-
 
   }
 
@@ -39,8 +35,7 @@ public class IntakeFeederSubsystem extends SubsystemBase {
   }
 
   public void setFeederPower(double power) {
-    feederMotor1.set(power);
-    feederMotor2.set(power);
+    feederMotor1.set(power); 
   }
 
   public void setIntakeFeederPower(double intakePower, double feederPower) {
@@ -54,6 +49,7 @@ public class IntakeFeederSubsystem extends SubsystemBase {
     controller.restoreFactoryDefaults();
 
     controller.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    
 
     controller.setInverted(isInverted);
 

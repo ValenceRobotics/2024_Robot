@@ -14,18 +14,27 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkFlex;
 import static edu.wpi.first.units.Units.Volts;
-
+import static edu.wpi.first.units.MutableMeasure.mutable;
+import edu.wpi.first.units.MutableMeasure;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
 
-    //private final CANSparkFlex shooterMotor1;
-    //private final CANSparkFlex shooterMotor2;
-    private final TalonFX shooterMotor1;
-    private final TalonFX shooterMotor2;
+    private final CANSparkFlex shooterMotortop;
+
+    private final CANSparkFlex shooterMotorbottom;
+    //private final TalonFX shooterMotortop;
+    //private final TalonFX shooterMotorbottom;
     private final PIDController shooterPid;
     private final SimpleMotorFeedforward shooterFeedforward;
     //ideally would want a velocity controller
@@ -36,15 +45,17 @@ public class ShooterSubsystem extends SubsystemBase {
     new SysIdRoutine.Config(),
     new SysIdRoutine.Mechanism(
     (voltage) -> this.setShooterVolts(voltage.in(Volts)),
-    null, // No log consumer, since data is recorded by URCL
+     null, // No log consumer, since data is recorded by URCL
     this
   ));
 
   public ShooterSubsystem() {
-    //shooterMotor1 = createShooterController(ShooterConstants.shooterMotor1Id, false);
-    //shooterMotor2 = createShooterController(ShooterConstants.shooterMotor2Id, true);
-    shooterMotor1 = createFalconShooterController(ShooterConstants.shooterMotor1Id, false);
-    shooterMotor2 = createFalconShooterController(ShooterConstants.shooterMotor2Id, true);
+
+    shooterMotortop = createShooterController(ShooterConstants.shooterMotortopId, false);
+    shooterMotorbottom = createShooterController(ShooterConstants.shooterMotorbottomId, false);
+
+    //shooterMotortop = createFalconShooterController(ShooterConstants.shooterMotor1Id, false);
+   // shooterMotorbottom = createFalconShooterController(ShooterConstants.shooterMotor2Id, true);
     shooterPid = new PIDController(0, 0, 0);
     shooterFeedforward = new SimpleMotorFeedforward(0, 0);
 
@@ -54,22 +65,24 @@ public class ShooterSubsystem extends SubsystemBase {
 
   }
 
-  public void setShooterPower(double power) {
-    shooterMotor1.set(power);
-    shooterMotor2.set(power);
+
+
+  public void setShooterPower(double toppower, double bottompower) {
+    shooterMotortop.set(toppower);
+    shooterMotorbottom.set(bottompower);
   }
 
   public void setLeftPower(double power) {
-    shooterMotor1.set(power);
+    shooterMotortop.set(power);
   }
 
   public void setRightPower(double power) {
-    shooterMotor2.set(power);
+    shooterMotorbottom.set(power);
   }
 
   public void setShooterVolts(double volts) {
-    shooterMotor1.setVoltage(volts);
-    shooterMotor2.setVoltage(volts);
+    shooterMotortop.setVoltage(volts);
+    shooterMotorbottom.setVoltage(volts);
   }
 
 
@@ -77,16 +90,16 @@ public class ShooterSubsystem extends SubsystemBase {
     double feedVelocity = shooterFeedforward.calculate(velocity);
     double pidVelocity1 = shooterPid.calculate(getTopVelocityRPM(), velocity);
     double pidVelocity2 = shooterPid.calculate(getBottomVelocityRPM(), velocity);
-    shooterMotor1.setVoltage(feedVelocity + pidVelocity1);
-    shooterMotor2.setVoltage(feedVelocity + pidVelocity2);
+    shooterMotortop.setVoltage(feedVelocity + pidVelocity1);
+    shooterMotorbottom.setVoltage(feedVelocity + pidVelocity2);
   }
 
   public double getTopVelocityRPM() {
-    return shooterMotor1.get() * ShooterConstants.vortexRPM;
+    return shooterMotortop.get() * ShooterConstants.vortexRPM;
   }
 
   public double getBottomVelocityRPM() {
-    return shooterMotor2.get() * ShooterConstants.vortexRPM;
+    return shooterMotorbottom.get() * ShooterConstants.vortexRPM;
   }
 
 

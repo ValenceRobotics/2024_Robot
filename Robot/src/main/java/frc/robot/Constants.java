@@ -30,8 +30,8 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 public final class Constants {
 
   public static class ShooterConstants {
-    public static final int shooterMotor1Id = 18;
-    public static final int shooterMotor2Id = 19;
+    public static final int shooterMotortopId = 21;
+    public static final int shooterMotorbottomId = 26;
     public static final double shooterPower = 0.3;
     public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
     public static final CurrentLimitsConfigs CURRENT_LIMIT = new CurrentLimitsConfigs().withStatorCurrentLimit(80);
@@ -39,19 +39,18 @@ public final class Constants {
    }
 
   public static final class ClimberConstants {
-    public static final int climbMotor1Id = 0;
-    public static final int climbMotor2Id = 0;
+    public static final int climbMotor1Id = 23;
+    public static final int climbMotor2Id = 24;
    }
 
   public static class IntakeFeederConstants {
-    public static final int intakeMotorId = 0;
-    public static final int feederMotor1Id = 0;
-    public static final int feederMotor2Id = 0;
+    public static final int intakeMotorId = 25;
+    public static final int feederMotor1Id = 18;
   }
 
   public static class PivotConstants {
-    public static final int pivotMotor1Id = 0;
-    public static final int pivotMotor2Id = 0;
+    public static final int pivotMotor1Id = 20;
+    public static final int pivotMotor2Id = 22;
 
     public static final TrapezoidProfile.Constraints kPivotControllerConstraints = new TrapezoidProfile.Constraints(
       0.5, 0);
@@ -84,7 +83,7 @@ public final class Constants {
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2 + Math.PI / 2;
     public static final double kFrontRightChassisAngularOffset = 0 + Math.PI / 2;
-    public static final double kBackLeftChassisAngularOffset = Math.PI + Math.PI / 2;
+    public static final double kBackLeftChassisAngularOffset = Math.PI;
     public static final double kBackRightChassisAngularOffset = Math.PI / 2 + Math.PI / 2;
 
     // SPARK MAX CAN IDs
