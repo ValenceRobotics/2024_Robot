@@ -43,7 +43,7 @@ public class PoseEstimator extends SubsystemBase {
 
         cam = new PhotonCamera("USB_Camera");
         //to configure
-        robotToCam = new Transform3d(new Translation3d(0.38, -0.15, 0.15), new Rotation3d(0,-30,0));
+        robotToCam = new Transform3d(new Translation3d(0.03, -0.32, 0.435), new Rotation3d(0,0,0));
         //numbers reflect current
         camList = new ArrayList<>();
         camList.add(new Pair<PhotonCamera, Transform3d>(cam, robotToCam));
