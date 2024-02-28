@@ -70,6 +70,11 @@ public class ShooterSubsystem extends SubsystemBase {
   public void setShooterPower(double toppower, double bottompower) {
     shooterMotortop.set(toppower);
     shooterMotorbottom.set(bottompower);
+
+    SmartDashboard.putNumber("shooter motor 1", shooterMotortop.getAppliedOutput());
+    SmartDashboard.putNumber("shooter motor 2", shooterMotortop.getAppliedOutput());
+
+
   }
 
   public void setLeftPower(double power) {
@@ -103,44 +108,23 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
 
-
-  private CANSparkMax createManipulatorController(int port, boolean isInverted) {
-    CANSparkMax controller = new CANSparkMax(port, MotorType.kBrushless);
-    controller.restoreFactoryDefaults();
-
-    controller.setIdleMode(CANSparkMax.IdleMode.kBrake);
-
-    controller.setInverted(isInverted);
-
-    return controller;
-}
-
   private CANSparkFlex createShooterController(int port, boolean isInverted) {
     CANSparkFlex controller = new CANSparkFlex(port, MotorType.kBrushless);
     controller.restoreFactoryDefaults();
 
     controller.setIdleMode(CANSparkFlex.IdleMode.kBrake);
+    controller.setSmartCurrentLimit(40);
+    controller.setClosedLoopRampRate(0.0);
+    controller.setOpenLoopRampRate(0.0);
+
 
     controller.setInverted(isInverted);
+
+    //controller.burnFlash();
 
     return controller;
   }
 
-  private TalonFX createFalconShooterController(int id, boolean invert) {
-    TalonFX shooterController = new TalonFX(id);
-    //shooterController.configFactoryDefault();
-
-    shooterController.setInverted(invert);
-    shooterController.setNeutralMode(ShooterConstants.NEUTRAL_MODE);
-    // shooterController.configSupplyCurrentLimit(ShooterConstants.CURRENT_LIMIT);
-
-    // shooterController.configOpenloopRamp(ShooterConstants.LONG_RAMP_RATE);
-    // shooterController.configClosedloopRamp(ShooterConstants.LONG_RAMP_RATE);
-    // shooterController.configVoltageCompSaturation(ShooterConstants.VOLTAGE_COMPENSATION);
-    //shooterController.enableVoltageCompensation(true);
-
-    return shooterController;
-}
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.quasistatic(direction);

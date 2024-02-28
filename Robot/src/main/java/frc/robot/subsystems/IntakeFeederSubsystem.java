@@ -19,6 +19,8 @@ public class IntakeFeederSubsystem extends SubsystemBase {
 
     private final CANSparkMax intakeMotor;
     private final CANSparkMax feederMotor1;
+    private boolean hasNote = true; 
+    private final double NOTE_HELD_THRESHOLD = 10;
 
 
   public IntakeFeederSubsystem() {
@@ -27,6 +29,13 @@ public class IntakeFeederSubsystem extends SubsystemBase {
 
   }
 
+  public boolean hasNote() {
+    return this.hasNote;
+  }
+
+  public void setNote(boolean hasNote) {
+    this.hasNote = hasNote;
+  }
 
 
 
@@ -84,6 +93,16 @@ public class IntakeFeederSubsystem extends SubsystemBase {
   public void periodic() {
     //SmartDashboard.putData(shooterPower);
     // This method will be called once per scheduler run
+
+    SmartDashboard.putNumber("IntakeMotor Velocity", intakeMotor.getEncoder().getVelocity());
+    if(intakeMotor.get() > 0 && intakeMotor.getEncoder().getVelocity() < NOTE_HELD_THRESHOLD){
+      this.hasNote = true; 
+    } else if(intakeMotor.get() > 0) {  // implicitly means our velocity is greater
+      this.hasNote = false; 
+    }
+    SmartDashboard.putBoolean("hasNote", this.hasNote);
+
+
   }
 
   @Override

@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Manipulator;
 
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.IntakeFeederSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -32,7 +33,7 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //.putNumber("Shooter/Top Power", 0);
+    //SmartDashboard.putNumber("Shooter/Top Power", 0);
     //SmartDashboard.putNumber("Shooter/Bottom Power", 0);
   }
 
@@ -40,7 +41,7 @@ public class Shoot extends Command {
   @Override
   public void execute() {
 
-    m_Shooter.setShooterPower(SmartDashboard.getNumber("Shooter/Top Power", 0), SmartDashboard.getNumber("Shooter/Bottom Power", 0));
+    m_Shooter.setShooterPower(0.85, 1);
 //         // speaker apriltags: 3,4,7,8
 // /**/
 //     AprilTagProcessor myAprilTagProcessor;
@@ -72,6 +73,7 @@ public class Shoot extends Command {
   @Override
   public void end(boolean interrupted) {
     m_Shooter.setShooterPower(0, 0);
+    RobotContainer.m_IntakeFeederSubsystem.setNote(false);
 }
 
   // Returns true when the command should end.

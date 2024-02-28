@@ -47,7 +47,9 @@ import frc.robot.commands.drive.SetSlowMode;
 import java.util.List;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
+import com.ctre.phoenix6.unmanaged.Unmanaged;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
  
 /*
@@ -61,7 +63,7 @@ public class RobotContainer {
   public static final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ShooterSubsystem m_Shooter = new ShooterSubsystem();
   private final PoseEstimator m_PoseEstimator = new PoseEstimator();
-  private final IntakeFeederSubsystem m_IntakeFeederSubsystem = new IntakeFeederSubsystem();
+  public static final IntakeFeederSubsystem m_IntakeFeederSubsystem = new IntakeFeederSubsystem();
   private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
   private final PivotSubsystem m_PivotSubsystem = new PivotSubsystem();
   private final ClimberSubsystem m_Climber = new ClimberSubsystem();
@@ -83,7 +85,7 @@ public class RobotContainer {
     configureButtonBindings();
 
 
-
+    Unmanaged.setPhoenixDiagnosticsStartTime(-1);
     // Configure default commands
     m_robotDrive.setDefaultCommand(
             new SwerveDrive(m_robotDrive,
@@ -91,13 +93,18 @@ public class RobotContainer {
                             OIConstants.kDriveDeadband),
                     () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
                             OIConstants.kDriveDeadband),
-                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(4),
+                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(2),
                             OIConstants.kDriveDeadband)));
 
     m_PivotSubsystem.setDefaultCommand(new OpenLoopPivot(m_PivotSubsystem, () -> (-0.3 * m_OperatorController.getRawAxis(1))));
     
     m_autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
+
+    //Register Named Commands 
+    NamedCommands.registerCommand("shootUpClose", new Shoot(m_Shooter));
+    NamedCommands.registerCommand("intake", new Intake(m_Shooter, m_IntakeFeederSubsystem));
+
   }
 
   /**
@@ -131,8 +138,8 @@ public class RobotContainer {
     new JoystickButton(m_driverController, 10)
       .whileTrue(new SetClimbRightPower(m_Climber, -1));
 
-    m_OperatorController.leftTrigger().whileTrue(new Shoot(m_Shooter));
-    m_OperatorController.rightTrigger().whileTrue(new Intake(m_Shooter, m_IntakeFeederSubsystem));
+    m_OperatorController.leftBumper().whileTrue(new Shoot(m_Shooter));
+    m_OperatorController.rightBumper().whileTrue(new Intake(m_Shooter, m_IntakeFeederSubsystem));
 
 
 
