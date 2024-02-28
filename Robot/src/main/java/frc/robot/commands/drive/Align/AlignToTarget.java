@@ -6,13 +6,15 @@ package frc.robot.commands.drive.Align;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AlignToTarget extends Command {
   /** Creates a new AlignToTarget. */
 
-  Pose2d target = null; 
+  Translation2d target = null; 
+  int delta = 100;
   public AlignToTarget() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -27,9 +29,9 @@ public class AlignToTarget extends Command {
     }
 
     if(isRed){
-      target = new Pose2d(0.25, 5.53, new Rotation2d(0));
+      target = new Translation2d(0.25, 5.53);
     } else{
-      target = new Pose2d(16.29, 5.53, new Rotation2d(0));
+      target = new Translation2d(16.29, 5.53);
     }
 
 
@@ -40,17 +42,23 @@ public class AlignToTarget extends Command {
   public void execute() {
       // calculate desired heading from current pose
       // reach it
+      //delta = target.minus(currentPose.getTranslation()).getAngle().getDegrees();
+      // if(delta > 0) {move p * error}
+      // else {move -p * error}
 
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+
+    // set drive to 0
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(delta) < 10;
   }
 }
