@@ -104,7 +104,7 @@ public class RobotContainer {
     //Register Named Commands 
     NamedCommands.registerCommand("shootUpClose", new Shoot(m_Shooter));
     NamedCommands.registerCommand("intake", new Intake(m_Shooter, m_IntakeFeederSubsystem));
-
+    //NamedCommands.registerCommand"shootAmpt", //amp command here )
   }
 
   /**

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.827867105971182,
-      "y": 4.328361263357597
+      "x": 15.64,
+      "y": 7.32
     },
-    "rotation": 60.572543596810604
+    "rotation": -90.0
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RED_pre+1"
+            "pathName": "RED_right_amp_1"
           }
         }
       ]
