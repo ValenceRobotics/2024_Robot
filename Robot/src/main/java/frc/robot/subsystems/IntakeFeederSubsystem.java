@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeFeederConstants;
+import frc.robot.Constants.IntakeState;
 import frc.robot.Constants.PivotConstants;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -20,7 +21,7 @@ public class IntakeFeederSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
     private final CANSparkMax feederMotor1;
     private boolean hasNote = true; 
-    private final double NOTE_HELD_THRESHOLD = 10;
+    private final double NOTE_HELD_THRESHOLD = 3000;
 
 
   public IntakeFeederSubsystem() {
@@ -41,6 +42,12 @@ public class IntakeFeederSubsystem extends SubsystemBase {
 
   public void setIntakePower(double power) {
     intakeMotor.set(power);
+  }
+
+  private IntakeState currentState = IntakeState.STOPPED;
+
+  public void setIntakeState(IntakeState state){
+    this.currentState = state; 
   }
 
   public void setFeederPower(double power) {
@@ -94,14 +101,16 @@ public class IntakeFeederSubsystem extends SubsystemBase {
     //SmartDashboard.putData(shooterPower);
     // This method will be called once per scheduler run
 
-    SmartDashboard.putNumber("IntakeMotor Velocity", intakeMotor.getEncoder().getVelocity());
-    if(intakeMotor.get() > 0 && intakeMotor.getEncoder().getVelocity() < NOTE_HELD_THRESHOLD){
+    SmartDashboard.putNumber("feeder Velocity", Math.abs(feederMotor1.getEncoder().getVelocity()));
+    if(Math.abs(feederMotor1.get()) > 0 && Math.abs(feederMotor1.getEncoder().getVelocity()) < NOTE_HELD_THRESHOLD){
       this.hasNote = true; 
-    } else if(intakeMotor.get() > 0) {  // implicitly means our velocity is greater
+    } else if(Math.abs(feederMotor1.get()) > 0) {  // implicitly means our velocity is greater
       this.hasNote = false; 
     }
     SmartDashboard.putBoolean("hasNote", this.hasNote);
 
+    this.intakeMotor.set(-currentState.intakeSpeed);
+    this.feederMotor1.set(-currentState.feederSpeed);
 
   }
 

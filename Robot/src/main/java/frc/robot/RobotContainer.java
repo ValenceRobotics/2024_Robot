@@ -4,24 +4,30 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import com.ctre.phoenix6.unmanaged.Unmanaged;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.IntakeState;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.ShooterState;
+import frc.robot.commands.SetPivotPosition;
+import frc.robot.commands.Climb.SetClimbLeftPower;
+import frc.robot.commands.Climb.SetClimbRightPower;
+import frc.robot.commands.Manipulator.SetMechanismState;
+import frc.robot.commands.drive.SetSlowMode;
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.subsystems.AprilTagCamera;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -30,27 +36,6 @@ import frc.robot.subsystems.IntakeFeederSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.ShooterSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.OpenLoopPivot;
-import frc.robot.commands.PivotPID;
-import frc.robot.commands.Climb.SetClimbLeftPower;
-import frc.robot.commands.Climb.SetClimbRightPower;
-import frc.robot.commands.Manipulator.Intake;
-import frc.robot.commands.Manipulator.Outtake;
-import frc.robot.commands.Manipulator.Shoot;
-import frc.robot.commands.drive.SetSlowMode;
-import java.util.List;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
-import com.ctre.phoenix6.unmanaged.Unmanaged;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
  
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -61,8 +46,8 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 public class RobotContainer {
   // The robot's subsystems
   public static final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final ShooterSubsystem m_Shooter = new ShooterSubsystem();
-  private final PoseEstimator m_PoseEstimator = new PoseEstimator();
+  public static final ShooterSubsystem m_Shooter = new ShooterSubsystem();
+  public static final PoseEstimator m_PoseEstimator = new PoseEstimator();
   public static final IntakeFeederSubsystem m_IntakeFeederSubsystem = new IntakeFeederSubsystem();
   private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
   private final PivotSubsystem m_PivotSubsystem = new PivotSubsystem();
@@ -96,14 +81,30 @@ public class RobotContainer {
                     () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(2),
                             OIConstants.kDriveDeadband)));
 
-    m_PivotSubsystem.setDefaultCommand(new OpenLoopPivot(m_PivotSubsystem, () -> (-0.3 * m_OperatorController.getRawAxis(1))));
+    //m_PivotSubsystem.setDefaultCommand(new OpenLoopPivot(m_PivotSubsystem, () -> (-0.3 * m_OperatorController.getRawAxis(1))));
     
+  
+    //Register Named Commands 
+    NamedCommands.registerCommand("shootUpClose", new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot)
+                                             .andThen(new SetMechanismState( ShooterState.SHOOTING))
+                                            .andThen(new WaitCommand(2))
+                                            .andThen(new SetMechanismState(IntakeState.SHOOTING))
+                                            .andThen(new WaitCommand(2))
+                                              .andThen(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED))
+                                              .andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition))
+
+    
+    );
+
+    NamedCommands.registerCommand("intakeStart", new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING));
+
+    NamedCommands.registerCommand("intakeStop", new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
+
     m_autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
-    //Register Named Commands 
-    NamedCommands.registerCommand("shootUpClose", new Shoot(m_Shooter));
-    NamedCommands.registerCommand("intake", new Intake(m_Shooter, m_IntakeFeederSubsystem));
+
+
     //NamedCommands.registerCommand"shootAmpt", //amp command here )
   }
 
@@ -118,7 +119,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     new JoystickButton(m_driverController, 1)
-        .whileTrue(new Outtake(m_IntakeFeederSubsystem));
+        .whileTrue(new SetMechanismState(IntakeState.SHOOTING)).onFalse(new SetMechanismState(IntakeState.STOPPED));
 
     new JoystickButton(m_driverController, 12).onTrue(new InstantCommand(m_robotDrive::resetGyro));
 
@@ -138,9 +139,12 @@ public class RobotContainer {
     new JoystickButton(m_driverController, 10)
       .whileTrue(new SetClimbRightPower(m_Climber, -1));
 
-    m_OperatorController.leftBumper().whileTrue(new Shoot(m_Shooter));
-    m_OperatorController.rightBumper().whileTrue(new Intake(m_Shooter, m_IntakeFeederSubsystem));
+    m_OperatorController.leftBumper().whileTrue(new SetMechanismState(ShooterState.SHOOTING)).onFalse(new SetMechanismState(ShooterState.STOPPED));
+        m_OperatorController.leftTrigger().whileTrue(new SetMechanismState(ShooterState.AMP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
 
+    m_OperatorController.rightBumper().whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING)).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
+
+    
 
 
     
@@ -152,9 +156,15 @@ public class RobotContainer {
     // m_OperatorController.x().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
     // m_OperatorController.y().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    m_OperatorController.x().whileTrue(new PivotPID(m_PivotSubsystem, 2.01));
+    m_OperatorController.x().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kAmpPosition));
+    m_OperatorController.b().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition));
+    m_OperatorController.a().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition));
+    SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
+    m_OperatorController.y().onTrue(new SetPivotPosition(m_PivotSubsystem, ()->SmartDashboard.getNumber("test pivot loc", PivotConstants.kHomePosition)));
 
-
+    m_OperatorController.start().onTrue(new SetPivotPosition(m_PivotSubsystem, true));
+    
+    m_OperatorController.povUp().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot));
 
   }
 
@@ -163,15 +173,15 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  private void configureAutoChooser() {
-        // Configure autonomous chooser with different auto paths
-        m_autoChooser.addOption("Auto Path 1", new PathPlannerAuto("Auto"));
-        m_autoChooser.addOption("Auto Path 2", new PathPlannerAuto("New Auto"));
-        // Add more paths as needed
+  // private void configureAutoChooser() {
+  //       // Configure autonomous chooser with different auto paths
+  //       m_autoChooser.addOption("Auto Path 1", new PathPlannerAuto("Auto"));
+  //       m_autoChooser.addOption("Auto Path 2", new PathPlannerAuto("New Auto"));
+  //       // Add more paths as needed
 
-        // Put the chooser on the dashboard
-        SmartDashboard.putData("Auto Mode", m_autoChooser);
-    }
+  //       // Put the chooser on the dashboard
+  //       SmartDashboard.putData("Auto Mode", m_autoChooser);
+  //   }
   public Command getAutonomousCommand() {
     // // Create config for trajectory
     // TrajectoryConfig config = new TrajectoryConfig(

@@ -21,6 +21,7 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -33,7 +34,10 @@ public class PivotSubsystem extends SubsystemBase {
     private final ArmFeedforward pivotFeedforward;
     private final AbsoluteEncoder absEncoder;
     private final double pivotVelocity;
-    private final PIDController pivotPIDController = new PIDController(.5, 0, 0);
+    private final PIDController pivotPIDController = new PIDController(.15, 0.0002, 0.001);
+
+    private double goal = PivotConstants.kHomePosition;
+    private double gravConst = 0.0783976825;
     //abs encoder
     //possible feedforward?
 
@@ -51,6 +55,9 @@ public class PivotSubsystem extends SubsystemBase {
     pivotController = new ProfiledPIDController(0, 0, 0, PivotConstants.kPivotControllerConstraints);
     pivotFeedforward = new ArmFeedforward(0, 0, 0);
     absEncoder = pivotMotor2.getAbsoluteEncoder(Type.kDutyCycle);
+    pivotPIDController.enableContinuousInput(0, 2*Math.PI);
+    pivotPIDController.setTolerance(Units.degreesToRadians(2));
+
     //absEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
     //absEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
     //absEncoder.setPositionOffset(PivotConstants.positionOffset);
@@ -90,6 +97,18 @@ public class PivotSubsystem extends SubsystemBase {
 
   public void setRightPower(double power) {
     pivotMotor2.set(power);
+  }
+
+  public void setGoal(double newGoal) {
+    this.goal = newGoal;
+  }
+
+  public double getGoal() {
+    return this.goal;
+  }
+
+  public boolean atGoal() {
+    return pivotPIDController.atSetpoint();
   }
 
 
@@ -146,6 +165,26 @@ public class PivotSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Pivot/Position", getPivotPosition());
     SmartDashboard.putNumber("Pivot/Test", 39585);
+    SmartDashboard.putNumber("Pivot/Goal", this.goal);
+
+
+    if(this.getGoal() == PivotConstants.kIntakePosition){
+      gravConst = 0;
+        setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
+
+    }
+
+    else if (getPivotPosition()>1.9) {
+      gravConst = 0.12; // old 0.15
+        setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
+
+  
+  
+     } else {
+      gravConst = 0.0783976825;
+      setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
+  
+     };
 
     //SmartDashboard.putData(shooterPower);
     // This method will be called once per scheduler run

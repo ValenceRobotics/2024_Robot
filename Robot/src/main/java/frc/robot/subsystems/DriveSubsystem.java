@@ -4,9 +4,16 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -16,11 +23,19 @@ import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldMeasurements;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.io.IOException;
+import java.util.Optional;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -66,9 +81,21 @@ public class DriveSubsystem extends SubsystemBase {
 
   private boolean fieldRelative;
   private boolean slowMode = false;
+    private AprilTagFieldLayout aprilTagFieldLayout = null;
+
 
   public DriveSubsystem(boolean fieldRelative) {
     this.fieldRelative = fieldRelative;
+
+       AprilTagFieldLayout layout;
+ 
+      layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+      var allianceB = DriverStation.getAlliance();
+      var alliance = allianceB.isPresent() ? allianceB.get() : Alliance.Blue;
+      layout.setOrigin(alliance == Alliance.Blue ?
+          OriginPosition.kBlueAllianceWallRightSide : OriginPosition.kRedAllianceWallRightSide);
+   
+    this.aprilTagFieldLayout = layout;
   }
 
   public boolean getFieldRelative() {
@@ -88,7 +115,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   // Odometry class for tracking robot pose
-  SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+  SwerveDrivePoseEstimator m_odometry = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics,
       m_gyro.getRotation2d(),
       new SwerveModulePosition[] {
@@ -96,7 +123,7 @@ public class DriveSubsystem extends SubsystemBase {
           m_frontRight.getPosition(),
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
-      });
+      }, new Pose2d());
 
   public void resetGyro() {
     m_gyro.reset();
@@ -136,7 +163,36 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    m_odometry.update(
+
+    var bruh = RobotContainer.m_PoseEstimator.getEstimator();
+    var visionPose = bruh.update();
+    if(visionPose.isPresent()) {
+      var huh = visionPose.get();
+      Pose3d pose3d = huh.estimatedPose;
+      m_odometry.addVisionMeasurement(pose3d.toPose2d(), huh.timestampSeconds);
+      SmartDashboard.putString("pose from vision ", pose3d.toPose2d().toString());
+    }
+
+
+      // Update pose estimator with the best visible target
+    // var pipelineResult = RobotContainer.m_PoseEstimator.getLatest();
+    // var resultTimestamp = pipelineResult.getTimestampSeconds();
+    // if (pipelineResult.hasTargets()) {
+    //   var target = pipelineResult.getBestTarget();
+    //   var fiducialId = target.getFiducialId();
+    //   // Get the tag pose from field layout - consider that the layout will be null if it failed to load
+    //   Optional<Pose3d> tagPose = aprilTagFieldLayout == null ? Optional.empty() : aprilTagFieldLayout.getTagPose(fiducialId);
+    //   if (target.getPoseAmbiguity() <= .2 && fiducialId >= 0 && tagPose.isPresent()) {
+    //     var targetPose = tagPose.get();
+    //     Transform3d camToTarget = target.getBestCameraToTarget();
+    //     Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
+ 
+    //     var visionMeasurement = camPose.transformBy(RobotContainer.m_PoseEstimator.robotToCam.inverse());
+    //     m_odometry.addVisionMeasurement(visionMeasurement.toPose2d(), resultTimestamp);
+    //   }
+    // }
+
+        m_odometry.update(
       m_gyro.getRotation2d(),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
@@ -145,7 +201,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
 
-    Pose2d pose = m_odometry.getPoseMeters();
+    Pose2d pose = m_odometry.getEstimatedPosition();
 
     SmartDashboard.putString("Pose2D Pose: ", pose.toString());
 
@@ -165,7 +221,29 @@ public class DriveSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumberArray("SwerveModuleStates", loggingState);
 
+
+
+    SmartDashboard.putNumber("translational dist to target",this.getDistToTarget() );
+
+
     
+
+  }
+
+  public double getDistToTarget(){
+        var alliance = DriverStation.getAlliance();
+    boolean isRed = false; 
+    if (alliance.isPresent()) {
+      isRed = alliance.get() == DriverStation.Alliance.Red;
+    }
+    Translation2d target;
+    if(!isRed){
+      target = FieldMeasurements.blueTarget;
+    } else{
+      target = FieldMeasurements.redTarget;
+    }
+    return this.getPose().getTranslation().getDistance(target);
+
 
   }
 
@@ -175,7 +253,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    return m_odometry.getEstimatedPosition();
   }
 
   /**

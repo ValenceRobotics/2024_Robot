@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.FieldMeasurements;
 
 public class AlignToTarget extends Command {
   /** Creates a new AlignToTarget. */
@@ -28,10 +29,10 @@ public class AlignToTarget extends Command {
       isRed = alliance.get() == DriverStation.Alliance.Red;
     }
 
-    if(isRed){
-      target = new Translation2d(0.25, 5.53);
+    if(!isRed){
+      target = FieldMeasurements.blueTarget;
     } else{
-      target = new Translation2d(16.29, 5.53);
+      target = FieldMeasurements.redTarget;
     }
 
 

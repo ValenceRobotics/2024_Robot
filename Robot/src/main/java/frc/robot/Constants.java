@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -29,6 +30,13 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
  */
 public final class Constants {
 
+  public static final class FieldMeasurements {
+   public static Translation2d blueTarget = new Translation2d(0.5, 5.53);
+   public static Translation2d redTarget =  new Translation2d(16.1, 5.53);
+
+
+  }
+
   public static class ShooterConstants {
     public static final int shooterMotortopId = 21;
     public static final int shooterMotorbottomId = 26;
@@ -48,14 +56,43 @@ public final class Constants {
     public static final int feederMotor1Id = 18;
   }
 
+  public static enum IntakeState {
+    STOPPED(0,0), SHOOTING(0,-1), INTAKING(0.8,0.6), OUTTAKING(0.3,0.3);
+    public final double intakeSpeed;
+    public final double feederSpeed;
+    private IntakeState(double intake, double feeder){
+      this.intakeSpeed = intake;
+      this.feederSpeed = feeder;
+    }
+  }
+  public static enum ShooterState {
+    STOPPED(0,0), SHOOTING(0.85,1), INTAKING(-0.6,-0.6),OUTTAKING(0.3,0.3), AMP(0.15,0.2);
+
+    public final double lowSpeed;
+    public final double highSpeed;
+    private ShooterState(double shooty, double shooty2){
+      this.lowSpeed = shooty;
+      this.highSpeed = shooty2;
+    }
+
+
+  }
+
   public static class PivotConstants {
     public static final int pivotMotor1Id = 20;
     public static final int pivotMotor2Id = 22;
 
     public static final TrapezoidProfile.Constraints kPivotControllerConstraints = new TrapezoidProfile.Constraints(
       0.5, 0);
-    
-    public static final double positionOffset = 0;
+
+    public static final double kHomePosition = 0.4;
+    public static final double kAmpPosition = 2.01;
+    public static final double kIntakePosition = 0.02;
+
+    public static final double kSubwooferShot = 1.17;
+
+
+
     
   }
    

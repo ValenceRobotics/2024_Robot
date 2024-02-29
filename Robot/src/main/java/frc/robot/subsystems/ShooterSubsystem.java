@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterState;
 import frc.robot.Constants.ShooterConstants;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -49,6 +50,7 @@ public class ShooterSubsystem extends SubsystemBase {
     this
   ));
 
+  private ShooterState currentState = ShooterState.STOPPED;
   public ShooterSubsystem() {
 
     shooterMotortop = createShooterController(ShooterConstants.shooterMotortopId, false);
@@ -63,6 +65,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
 
+  }
+
+  public void setShooterState(ShooterState state){
+    this.currentState = state; 
   }
 
 
@@ -165,8 +171,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //SmartDashboard.putData(shooterPower);
-    // This method will be called once per scheduler run
+      shooterMotorbottom.set(currentState.lowSpeed);
+      shooterMotortop.set(currentState.highSpeed);
   }
 
   @Override
