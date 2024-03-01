@@ -30,6 +30,10 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
  */
 public final class Constants {
 
+  public static final class DebugConstants {
+    public static boolean kDebugMode = false;
+  }
+
   public static final class FieldMeasurements {
    public static Translation2d blueTarget = new Translation2d(0.5, 5.53);
    public static Translation2d redTarget =  new Translation2d(16.1, 5.53);
@@ -57,7 +61,7 @@ public final class Constants {
   }
 
   public static enum IntakeState {
-    STOPPED(0,0), SHOOTING(0,-1), INTAKING(0.8,0.6), OUTTAKING(0.3,0.3);
+    STOPPED(0,0), SHOOTING(0,-1), INTAKING(0.8,0.6), OUTTAKING(-0.3,-0.3);
     public final double intakeSpeed;
     public final double feederSpeed;
     private IntakeState(double intake, double feeder){
@@ -85,7 +89,7 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kPivotControllerConstraints = new TrapezoidProfile.Constraints(
       0.5, 0);
 
-    public static final double kHomePosition = 0.4;
+    public static final double kHomePosition = 0.3;
     public static final double kAmpPosition = 2.01;
     public static final double kIntakePosition = 0.02;
 

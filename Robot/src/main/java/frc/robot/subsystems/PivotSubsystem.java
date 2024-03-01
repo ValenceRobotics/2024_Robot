@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.DebugConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.PivotConstants;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -23,6 +24,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PivotSubsystem extends SubsystemBase {
@@ -34,8 +36,7 @@ public class PivotSubsystem extends SubsystemBase {
     private final ArmFeedforward pivotFeedforward;
     private final AbsoluteEncoder absEncoder;
     private final double pivotVelocity;
-    private final PIDController pivotPIDController = new PIDController(.15, 0.0002, 0.001);
-
+    private final PIDController pivotPIDController = new PIDController(.1, 0.0001, 0.00);
     private double goal = PivotConstants.kHomePosition;
     private double gravConst = 0.0783976825;
     //abs encoder
@@ -56,7 +57,8 @@ public class PivotSubsystem extends SubsystemBase {
     pivotFeedforward = new ArmFeedforward(0, 0, 0);
     absEncoder = pivotMotor2.getAbsoluteEncoder(Type.kDutyCycle);
     pivotPIDController.enableContinuousInput(0, 2*Math.PI);
-    pivotPIDController.setTolerance(Units.degreesToRadians(2));
+    pivotPIDController.setTolerance(Units.degreesToRadians(3));
+    Shuffleboard.getTab("Pivot").add("pid test", pivotPIDController);
 
     //absEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
     //absEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
@@ -118,6 +120,7 @@ public class PivotSubsystem extends SubsystemBase {
     controller.restoreFactoryDefaults();
 
     controller.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    controller.setSmartCurrentLimit(40);
 
     controller.setInverted(isInverted);
 
@@ -163,10 +166,15 @@ public class PivotSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (DebugConstants.kDebugMode) {
     SmartDashboard.putNumber("Pivot/Position", getPivotPosition());
     SmartDashboard.putNumber("Pivot/Test", 39585);
     SmartDashboard.putNumber("Pivot/Goal", this.goal);
 
+    SmartDashboard.putNumber("Pivot/Current 1", pivotMotor1.getOutputCurrent());
+    SmartDashboard.putNumber("Pivot/Current 2", pivotMotor2.getOutputCurrent());
+    SmartDashboard.putNumber("Pivot/Output power", pivotMotor1.getAppliedOutput());
+    }
 
     if(this.getGoal() == PivotConstants.kIntakePosition){
       gravConst = 0;
@@ -181,7 +189,7 @@ public class PivotSubsystem extends SubsystemBase {
   
   
      } else {
-      gravConst = 0.0783976825;
+      gravConst = 0.078;
       setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
   
      };

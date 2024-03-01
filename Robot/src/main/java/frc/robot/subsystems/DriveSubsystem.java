@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.DebugConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldMeasurements;
 import frc.utils.SwerveUtils;
@@ -44,6 +45,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 public class DriveSubsystem extends SubsystemBase {
+
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -203,6 +205,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     Pose2d pose = m_odometry.getEstimatedPosition();
 
+    if (DebugConstants.kDebugMode) {
+
     SmartDashboard.putString("Pose2D Pose: ", pose.toString());
 
 
@@ -224,6 +228,10 @@ public class DriveSubsystem extends SubsystemBase {
 
 
     SmartDashboard.putNumber("translational dist to target",this.getDistToTarget() );
+
+    }
+
+
 
 
     

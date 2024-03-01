@@ -12,9 +12,11 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,6 +31,7 @@ import frc.robot.commands.Climb.SetClimbRightPower;
 import frc.robot.commands.Manipulator.SetMechanismState;
 import frc.robot.commands.drive.SetSlowMode;
 import frc.robot.commands.drive.SwerveDrive;
+import frc.robot.commands.drive.Align.AlignToTarget;
 import frc.robot.subsystems.AprilTagCamera;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -85,23 +88,31 @@ public class RobotContainer {
     
   
     //Register Named Commands 
-    NamedCommands.registerCommand("shootUpClose", new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot)
+    NamedCommands.registerCommand("shootUpClose", (new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot).withTimeout(2) )
                                              .andThen(new SetMechanismState( ShooterState.SHOOTING))
                                             .andThen(new WaitCommand(2))
                                             .andThen(new SetMechanismState(IntakeState.SHOOTING))
                                             .andThen(new WaitCommand(2))
                                               .andThen(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED))
-                                              .andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition))
+                                              .andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).withTimeout(2))
 
     
     );
+
 
     NamedCommands.registerCommand("intakeStart", new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING));
 
     NamedCommands.registerCommand("intakeStop", new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
 
     m_autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", m_autoChooser);
+    Shuffleboard.getTab("Dashboard").add("Auto Chooser", m_autoChooser);
+    SendableChooser<Boolean> debugMode = new SendableChooser<>();
+    debugMode.addOption("Enabled", true);
+    debugMode.setDefaultOption("Disabled", false);
+    debugMode.onChange(x-> Constants.DebugConstants.kDebugMode = x);
+    Shuffleboard.getTab("Dashboard").add("Debug Mode", debugMode);
+
+
 
 
 
@@ -140,10 +151,12 @@ public class RobotContainer {
       .whileTrue(new SetClimbRightPower(m_Climber, -1));
 
     m_OperatorController.leftBumper().whileTrue(new SetMechanismState(ShooterState.SHOOTING)).onFalse(new SetMechanismState(ShooterState.STOPPED));
-        m_OperatorController.leftTrigger().whileTrue(new SetMechanismState(ShooterState.AMP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
+    m_OperatorController.leftTrigger().whileTrue(new SetMechanismState(ShooterState.AMP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
 
-    m_OperatorController.rightBumper().whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING)).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
+    m_OperatorController.rightBumper().whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
+    m_OperatorController.rightTrigger().whileTrue(new SetMechanismState(IntakeState.OUTTAKING, ShooterState.OUTTAKING)).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
 
+    m_OperatorController.button(8).whileTrue(Commands.run(() -> m_PivotSubsystem.setGoal((2*Math.PI/3)*Math.abs(m_OperatorController.getRawAxis(1)))));
     
 
 
@@ -159,10 +172,15 @@ public class RobotContainer {
     m_OperatorController.x().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kAmpPosition));
     m_OperatorController.b().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition));
     m_OperatorController.a().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition));
-    SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
-    m_OperatorController.y().onTrue(new SetPivotPosition(m_PivotSubsystem, ()->SmartDashboard.getNumber("test pivot loc", PivotConstants.kHomePosition)));
+    // SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
+    // m_OperatorController.y().onTrue(new SetPivotPosition(m_PivotSubsystem, ()->SmartDashboard.getNumber("test pivot loc", PivotConstants.kHomePosition)));
+    m_OperatorController.y().whileTrue(new AlignToTarget(m_robotDrive));
+    // test vision/rotation
+    // test pivot down on intake
+    // check dashboard/debugmode
+    // 
 
-    m_OperatorController.start().onTrue(new SetPivotPosition(m_PivotSubsystem, true));
+    // m_OperatorController.start().onTrue(new SetPivotPosition(m_PivotSubsystem, true));
     
     m_OperatorController.povUp().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot));
 

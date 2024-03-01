@@ -4,15 +4,13 @@
 
 package frc.robot.commands.Manipulator;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.IntakeState;
 import frc.robot.Constants.ShooterState;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.IntakeFeederSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class SetMechanismState extends Command {
+public class SetMechanismState extends InstantCommand {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
 
@@ -72,24 +70,5 @@ public class SetMechanismState extends Command {
 
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-  
-
-    // m_Manipulator.setShooterPower(-0.5, -0.5);
-    // m_intakeFeeder.setIntakeFeederPower(-0.7, -0.6);
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;  // return m_intakeFeeder.hasNote();
-  }
+  // Called every time the scheduler runs while the command is scheduled
 }

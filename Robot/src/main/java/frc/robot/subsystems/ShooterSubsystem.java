@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.DebugConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterState;
 import frc.robot.Constants.ShooterConstants;
@@ -77,9 +78,11 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotortop.set(toppower);
     shooterMotorbottom.set(bottompower);
 
+    if (DebugConstants.kDebugMode) {
+
     SmartDashboard.putNumber("shooter motor 1", shooterMotortop.getAppliedOutput());
     SmartDashboard.putNumber("shooter motor 2", shooterMotortop.getAppliedOutput());
-
+    }
 
   }
 

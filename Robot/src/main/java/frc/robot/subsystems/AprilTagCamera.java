@@ -5,16 +5,13 @@
 package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonTargetSortMode;
-import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DebugConstants;
 
 public class AprilTagCamera extends SubsystemBase {
 
@@ -31,9 +28,10 @@ public class AprilTagCamera extends SubsystemBase {
 
   @Override
   public void periodic() {
-    var result = camera.getLatestResult();
-    SmartDashboard.putBoolean("Camera/HasTarget", result.hasTargets());
-    if(result.hasTargets()){
+    if (DebugConstants.kDebugMode) {
+          var result = camera.getLatestResult();
+      SmartDashboard.putBoolean("Camera/HasTarget", result.hasTargets());
+      if(result.hasTargets()){
       var bestTarget = result.getBestTarget();
       SmartDashboard.putNumber("Camera/Tag ID", bestTarget.getFiducialId());
       SmartDashboard.putNumber("Camera/Pose Ambuguity", bestTarget.getPoseAmbiguity());
@@ -45,6 +43,9 @@ public class AprilTagCamera extends SubsystemBase {
       pitch = bestTarget.getPitch();
       yaw = bestTarget.getYaw();
       skew = bestTarget.getSkew();
+
+    }
+
     }
    }
 

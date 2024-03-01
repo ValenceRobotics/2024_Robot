@@ -4,16 +4,15 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeFeederConstants;
-import frc.robot.Constants.IntakeState;
-import frc.robot.Constants.PivotConstants;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DebugConstants;
+import frc.robot.Constants.IntakeFeederConstants;
+import frc.robot.Constants.IntakeState;
 
 public class IntakeFeederSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -100,14 +99,17 @@ public class IntakeFeederSubsystem extends SubsystemBase {
   public void periodic() {
     //SmartDashboard.putData(shooterPower);
     // This method will be called once per scheduler run
-
+    if (DebugConstants.kDebugMode) {
     SmartDashboard.putNumber("feeder Velocity", Math.abs(feederMotor1.getEncoder().getVelocity()));
+    SmartDashboard.putBoolean("hasNote", this.hasNote);
+    }
+    
     if(Math.abs(feederMotor1.get()) > 0 && Math.abs(feederMotor1.getEncoder().getVelocity()) < NOTE_HELD_THRESHOLD){
       this.hasNote = true; 
     } else if(Math.abs(feederMotor1.get()) > 0) {  // implicitly means our velocity is greater
       this.hasNote = false; 
     }
-    SmartDashboard.putBoolean("hasNote", this.hasNote);
+
 
     this.intakeMotor.set(-currentState.intakeSpeed);
     this.feederMotor1.set(-currentState.feederSpeed);

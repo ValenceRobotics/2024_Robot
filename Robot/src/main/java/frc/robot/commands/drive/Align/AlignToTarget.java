@@ -4,19 +4,26 @@
 
 package frc.robot.commands.drive.Align;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.DebugConstants;
 import frc.robot.Constants.FieldMeasurements;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class AlignToTarget extends Command {
   /** Creates a new AlignToTarget. */
+  DriveSubsystem m_Drive;
+  PIDController thetaController = new PIDController(0.0015, 0, 0);
 
   Translation2d target = null; 
-  int delta = 100;
-  public AlignToTarget() {
+  double delta = 100;
+  public AlignToTarget(DriveSubsystem drive) {
+    this.m_Drive = drive;
+    thetaController.enableContinuousInput(-180, 180);
+    addRequirements(m_Drive);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -43,9 +50,15 @@ public class AlignToTarget extends Command {
   public void execute() {
       // calculate desired heading from current pose
       // reach it
-      //delta = target.minus(currentPose.getTranslation()).getAngle().getDegrees();
-      // if(delta > 0) {move p * error}
-      // else {move -p * error}
+      delta = target.minus(m_Drive.getPose().getTranslation()).getAngle().getDegrees();
+
+    if(DebugConstants.kDebugMode){
+
+      SmartDashboard.putNumber("AutoAlign Error", delta);
+    }
+
+      m_Drive.drive(0, 0, -thetaController.calculate(delta,0), false, true);
+
 
 
   }
@@ -60,6 +73,6 @@ public class AlignToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(delta) < 10;
+    return Math.abs(delta) < 3;
   }
 }
