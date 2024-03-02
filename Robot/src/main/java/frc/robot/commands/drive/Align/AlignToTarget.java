@@ -65,7 +65,7 @@ public class AlignToTarget extends Command {
       SmartDashboard.putNumber("Autoalign/AutoAlign Error", delta);
     }
 
-      m_Drive.drive(0, 0, -thetaController.calculate(delta,0), false, true);
+      m_Drive.drive(0, 0, thetaController.calculate(delta,0), false, true);
 
 
 

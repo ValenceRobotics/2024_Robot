@@ -94,9 +94,9 @@ public final class Constants {
     public static final double kAmpPosition = 2.01;
     public static final double kIntakePosition = 0.02;
 
-    public static final double kSubwooferShot = 1.17;
+    public static final double kSubwooferShot = 1.17- Units.degreesToRadians(7.5);
 
-    public static final double kSubwooferSideShot = 1.17- Units.degreesToRadians(5);
+    public static final double kSubwooferSideShot = 1.17- Units.degreesToRadians(7.5);
 
 
 

@@ -36,7 +36,7 @@ public class PivotSubsystem extends SubsystemBase {
     private final ArmFeedforward pivotFeedforward;
     private final AbsoluteEncoder absEncoder;
     private final double pivotVelocity;
-    private final PIDController pivotPIDController = new PIDController(.1, 0.0001, 0.00);
+    private final PIDController pivotPIDController = new PIDController(.1, 0.00005, 0.00);
     private double goal = PivotConstants.kHomePosition;
     private double gravConst = 0.0783976825;
     //abs encoder

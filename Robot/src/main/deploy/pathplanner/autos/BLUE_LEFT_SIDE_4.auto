@@ -52,24 +52,6 @@
           "data": {
             "name": "shootUpClose"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SIDESHOOT_4_Start"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SIDESHOOT_4_FINISH"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shootUpClose"
-          }
         }
       ]
     }

@@ -100,7 +100,7 @@ public class RobotContainer {
     );
 
 
-    NamedCommands.registerCommand("intakeStart", new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING));
+    NamedCommands.registerCommand("intakeStart", new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition).alongWith(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING)));
 
 
 
@@ -155,7 +155,7 @@ public class RobotContainer {
     m_OperatorController.rightTrigger().whileTrue(new SetMechanismState(ShooterState.SHOOTING)).onFalse(new SetMechanismState(ShooterState.STOPPED));
     m_OperatorController.leftTrigger().whileTrue(new SetMechanismState(ShooterState.AMP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
 
-    m_OperatorController.rightBumper().whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition)));
+    new JoystickButton(m_driverController, 4).whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition)));
     m_OperatorController.leftBumper().whileTrue(new SetMechanismState(IntakeState.OUTTAKING, ShooterState.OUTTAKING)).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
 
     m_OperatorController.button(8).whileTrue(Commands.run(() -> m_PivotSubsystem.setGoal((2*Math.PI/3)*Math.abs(m_OperatorController.getRawAxis(1)))));
