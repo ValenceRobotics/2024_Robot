@@ -2,19 +2,25 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.831450610269641,
-      "y": 4.38240635879768
+      "x": 0.6576257764044353,
+      "y": 6.74849429899361
     },
-    "rotation": 61.38954033403468
+    "rotation": -120.65066795705285
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "shootUpClose"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "RED_left_pre"
+            "pathName": "SIDESHOOT_2_Start"
           }
         }
       ]

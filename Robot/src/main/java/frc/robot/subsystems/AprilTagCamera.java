@@ -16,7 +16,7 @@ import frc.robot.Constants.DebugConstants;
 public class AprilTagCamera extends SubsystemBase {
 
  
-  PhotonCamera camera = new PhotonCamera("USB_Camera");
+  PhotonCamera camera = new PhotonCamera("visionCam");
 
   private double pitch = 0;
   private double yaw = 0;

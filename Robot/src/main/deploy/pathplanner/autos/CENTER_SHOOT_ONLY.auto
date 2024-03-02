@@ -2,19 +2,19 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.0,
-      "y": 6.0
+      "x": 1.3160154641111295,
+      "y": 5.462576940191475
     },
-    "rotation": 0.0
+    "rotation": -178.4306451952511
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Copy of MonkeyPath"
+            "name": "shootUpClose"
           }
         }
       ]

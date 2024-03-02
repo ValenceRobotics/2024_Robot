@@ -7,6 +7,7 @@ package frc.robot;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -35,8 +36,8 @@ public final class Constants {
   }
 
   public static final class FieldMeasurements {
-   public static Translation2d blueTarget = new Translation2d(0.5, 5.53);
-   public static Translation2d redTarget =  new Translation2d(16.1, 5.53);
+   public static Pose2d blueTarget = new Pose2d(0.5, 5.53, new Rotation2d(Units.degreesToRadians(180)));
+   public static Pose2d redTarget =  new Pose2d(16.1, 5.53, new Rotation2d(Units.degreesToRadians(0)));
 
 
   }
@@ -70,7 +71,7 @@ public final class Constants {
     }
   }
   public static enum ShooterState {
-    STOPPED(0,0), SHOOTING(0.85,1), INTAKING(-0.6,-0.6),OUTTAKING(0.3,0.3), AMP(0.15,0.2);
+    STOPPED(0,0), SHOOTING(0.85,1), INTAKING(-0.6,-0.6),OUTTAKING(0.3,0.3), AMP(0.125,0.15);
 
     public final double lowSpeed;
     public final double highSpeed;
@@ -94,6 +95,8 @@ public final class Constants {
     public static final double kIntakePosition = 0.02;
 
     public static final double kSubwooferShot = 1.17;
+
+    public static final double kSubwooferSideShot = 1.17- Units.degreesToRadians(5);
 
 
 
@@ -123,7 +126,7 @@ public final class Constants {
 
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2 + Math.PI / 2;
-    public static final double kFrontRightChassisAngularOffset = 0 + Math.PI / 2;
+    public static final double kFrontRightChassisAngularOffset = 0;
     public static final double kBackLeftChassisAngularOffset = Math.PI;
     public static final double kBackRightChassisAngularOffset = Math.PI / 2 + Math.PI / 2;
 

@@ -7,14 +7,13 @@ package frc.robot;
 import com.ctre.phoenix6.unmanaged.Unmanaged;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -71,7 +70,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-
+    CameraServer.startAutomaticCapture();
 
     Unmanaged.setPhoenixDiagnosticsStartTime(-1);
     // Configure default commands
@@ -81,20 +80,21 @@ public class RobotContainer {
                             OIConstants.kDriveDeadband),
                     () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
                             OIConstants.kDriveDeadband),
-                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(2),
+                    () -> -0.75*MathUtil.applyDeadband(m_driverController.getRawAxis(2),
                             OIConstants.kDriveDeadband)));
 
     //m_PivotSubsystem.setDefaultCommand(new OpenLoopPivot(m_PivotSubsystem, () -> (-0.3 * m_OperatorController.getRawAxis(1))));
     
   
     //Register Named Commands 
-    NamedCommands.registerCommand("shootUpClose", (new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot).withTimeout(2) )
+    NamedCommands.registerCommand("shootUpClose", (new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferSideShot).withTimeout(1) )
                                              .andThen(new SetMechanismState( ShooterState.SHOOTING))
-                                            .andThen(new WaitCommand(2))
+                                            .andThen(new WaitCommand(1))
                                             .andThen(new SetMechanismState(IntakeState.SHOOTING))
-                                            .andThen(new WaitCommand(2))
+                                            .andThen(new WaitCommand(0.5))
                                               .andThen(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED))
-                                              .andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).withTimeout(2))
+                                              .andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).withTimeout(1))
+                                            
 
     
     );
@@ -102,7 +102,9 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("intakeStart", new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING));
 
-    NamedCommands.registerCommand("intakeStop", new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
+
+
+    NamedCommands.registerCommand("intakeStop", new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition)));
 
     m_autoChooser = AutoBuilder.buildAutoChooser();
     Shuffleboard.getTab("Dashboard").add("Auto Chooser", m_autoChooser);
@@ -130,7 +132,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     new JoystickButton(m_driverController, 1)
-        .whileTrue(new SetMechanismState(IntakeState.SHOOTING)).onFalse(new SetMechanismState(IntakeState.STOPPED));
+        .whileTrue(new SetMechanismState(IntakeState.SHOOTING)).onFalse(new SetMechanismState(IntakeState.STOPPED).andThen(new WaitCommand(0.5).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition))));
 
     new JoystickButton(m_driverController, 12).onTrue(new InstantCommand(m_robotDrive::resetGyro));
 
@@ -150,11 +152,11 @@ public class RobotContainer {
     new JoystickButton(m_driverController, 10)
       .whileTrue(new SetClimbRightPower(m_Climber, -1));
 
-    m_OperatorController.leftBumper().whileTrue(new SetMechanismState(ShooterState.SHOOTING)).onFalse(new SetMechanismState(ShooterState.STOPPED));
+    m_OperatorController.rightTrigger().whileTrue(new SetMechanismState(ShooterState.SHOOTING)).onFalse(new SetMechanismState(ShooterState.STOPPED));
     m_OperatorController.leftTrigger().whileTrue(new SetMechanismState(ShooterState.AMP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
 
-    m_OperatorController.rightBumper().whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
-    m_OperatorController.rightTrigger().whileTrue(new SetMechanismState(IntakeState.OUTTAKING, ShooterState.OUTTAKING)).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
+    m_OperatorController.rightBumper().whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition)));
+    m_OperatorController.leftBumper().whileTrue(new SetMechanismState(IntakeState.OUTTAKING, ShooterState.OUTTAKING)).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
 
     m_OperatorController.button(8).whileTrue(Commands.run(() -> m_PivotSubsystem.setGoal((2*Math.PI/3)*Math.abs(m_OperatorController.getRawAxis(1)))));
     
@@ -170,7 +172,6 @@ public class RobotContainer {
     // m_OperatorController.y().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     m_OperatorController.x().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kAmpPosition));
-    m_OperatorController.b().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition));
     m_OperatorController.a().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition));
     // SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
     // m_OperatorController.y().onTrue(new SetPivotPosition(m_PivotSubsystem, ()->SmartDashboard.getNumber("test pivot loc", PivotConstants.kHomePosition)));
@@ -180,9 +181,13 @@ public class RobotContainer {
     // check dashboard/debugmode
     // 
 
-    // m_OperatorController.start().onTrue(new SetPivotPosition(m_PivotSubsystem, true));
+    m_OperatorController.start().onTrue(new SetPivotPosition(m_PivotSubsystem, true));
     
     m_OperatorController.povUp().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot));
+    m_OperatorController.povDown().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kAmpPosition));
+    m_OperatorController.povRight().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition));
+
+
 
   }
 

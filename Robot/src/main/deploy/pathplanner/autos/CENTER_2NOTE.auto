@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2670652829457314,
-      "y": 5.544193078907484
+      "x": 1.3160154641111295,
+      "y": 5.462576940191475
     },
-    "rotation": -179.5153077548035
+    "rotation": -178.4306451952511
   },
   "command": {
     "type": "sequential",
@@ -20,7 +20,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "foundrytest"
+            "pathName": "MIDDLESHOOT_INTAKE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MIDDLESHOOT_INTAKE_RETURN"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootUpClose"
           }
         }
       ]

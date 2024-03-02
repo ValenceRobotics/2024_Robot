@@ -246,9 +246,9 @@ public class DriveSubsystem extends SubsystemBase {
     }
     Translation2d target;
     if(!isRed){
-      target = FieldMeasurements.blueTarget;
+      target = FieldMeasurements.blueTarget.getTranslation();
     } else{
-      target = FieldMeasurements.redTarget;
+      target = FieldMeasurements.redTarget.getTranslation();
     }
     return this.getPose().getTranslation().getDistance(target);
 

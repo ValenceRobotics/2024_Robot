@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import org.littletonrobotics.urcl.URCL;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -35,9 +33,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    DataLogManager.start();
-    URCL.start();
     m_robotContainer = new RobotContainer();
+        DataLogManager.stop();
+
+ 
   }
 
   /**
@@ -61,7 +60,6 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     CommandScheduler.getInstance().schedule(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
     RobotContainer.m_robotDrive.resetOdometry(new Pose2d(0,0, new Rotation2d(0)));
-
   }
 
   @Override

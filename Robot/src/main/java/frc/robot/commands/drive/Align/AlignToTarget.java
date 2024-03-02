@@ -5,6 +5,7 @@
 package frc.robot.commands.drive.Align;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,9 +17,9 @@ import frc.robot.subsystems.DriveSubsystem;
 public class AlignToTarget extends Command {
   /** Creates a new AlignToTarget. */
   DriveSubsystem m_Drive;
-  PIDController thetaController = new PIDController(0.0015, 0, 0);
-
-  Translation2d target = null; 
+  PIDController thetaController = new PIDController(0.0025, 0, 0);
+  boolean isRed;
+  Pose2d target = null; 
   double delta = 100;
   public AlignToTarget(DriveSubsystem drive) {
     this.m_Drive = drive;
@@ -31,7 +32,7 @@ public class AlignToTarget extends Command {
   @Override
   public void initialize() {
     var alliance = DriverStation.getAlliance();
-    boolean isRed = false; 
+    isRed = false; 
     if (alliance.isPresent()) {
       isRed = alliance.get() == DriverStation.Alliance.Red;
     }
@@ -50,11 +51,18 @@ public class AlignToTarget extends Command {
   public void execute() {
       // calculate desired heading from current pose
       // reach it
-      delta = target.minus(m_Drive.getPose().getTranslation()).getAngle().getDegrees();
+      var straightToTarget = target.getTranslation().minus(m_Drive.getPose().getTranslation()).getAngle().getDegrees();
+      
+      if(isRed) {
+      delta = straightToTarget + m_Drive.getHeading();
+      } else{
+
+        delta = straightToTarget + (m_Drive.getHeading() < 0 ? m_Drive.getHeading() % 180: 180-m_Drive.getHeading());
+      }
 
     if(DebugConstants.kDebugMode){
 
-      SmartDashboard.putNumber("AutoAlign Error", delta);
+      SmartDashboard.putNumber("Autoalign/AutoAlign Error", delta);
     }
 
       m_Drive.drive(0, 0, -thetaController.calculate(delta,0), false, true);
