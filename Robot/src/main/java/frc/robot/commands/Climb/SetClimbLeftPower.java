@@ -41,7 +41,7 @@ public class SetClimbLeftPower extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Climber.setLeftPower(m_power);
+    m_Climber.setClimbPower(m_power);
 
 
   }
@@ -49,7 +49,7 @@ public class SetClimbLeftPower extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Climber.setLeftPower(0);
+    m_Climber.setClimbPower(0);
 
   }
 

@@ -45,11 +45,11 @@ public class SwerveDrive extends Command {
 
   public double applyJoystickTransform(double raw) {
     if(dt.getSlowMode()) {
-      return 0.2*raw;
+      return 0.4*raw;
     }
 
     //raw = 0.7*raw + 0.3*(Math.pow(raw, 3));
     //return raw/1.25;
-    return 0.5 * raw + 0.5 * Math.pow(raw,3);
+    return Math.pow(raw,3);
   }
 }

@@ -4,12 +4,17 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import com.ctre.phoenix6.unmanaged.Unmanaged;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -20,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.FieldMeasurements;
 import frc.robot.Constants.IntakeState;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PivotConstants;
@@ -31,8 +37,10 @@ import frc.robot.commands.Manipulator.SetMechanismState;
 import frc.robot.commands.drive.SetSlowMode;
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.Align.AlignToTarget;
+import frc.robot.commands.drive.Align.DriveToTarget;
 import frc.robot.subsystems.AprilTagCamera;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberSubsystem2;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeFeederSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -54,7 +62,9 @@ public class RobotContainer {
   private final AprilTagCamera m_AprilTagCamera = new AprilTagCamera();
   private final PivotSubsystem m_PivotSubsystem = new PivotSubsystem();
   private final ClimberSubsystem m_Climber = new ClimberSubsystem();
-
+  private final ClimberSubsystem2 m_Climber2 = new ClimberSubsystem2();
+  public static boolean isRed = false;
+  public static Command currentAlignPath = new InstantCommand(); 
   // Autonomous chooser
   private final SendableChooser<Command> m_autoChooser;
 
@@ -70,8 +80,11 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
     CameraServer.startAutomaticCapture();
 
+    DataLogManager.stop();
+    
     Unmanaged.setPhoenixDiagnosticsStartTime(-1);
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -147,15 +160,15 @@ public class RobotContainer {
       .whileTrue(new SetClimbLeftPower(m_Climber, -1));
 
     new JoystickButton(m_driverController, 6)
-      .whileTrue(new SetClimbRightPower(m_Climber, 1));
+      .whileTrue(new SetClimbRightPower(m_Climber2, 1));
 
     new JoystickButton(m_driverController, 10)
-      .whileTrue(new SetClimbRightPower(m_Climber, -1));
+      .whileTrue(new SetClimbRightPower(m_Climber2, -1));
 
     m_OperatorController.rightTrigger().whileTrue(new SetMechanismState(ShooterState.SHOOTING)).onFalse(new SetMechanismState(ShooterState.STOPPED));
     m_OperatorController.leftTrigger().whileTrue(new SetMechanismState(ShooterState.AMP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
 
-    new JoystickButton(m_driverController, 4).whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition)));
+    new JoystickButton(m_driverController, 4).whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition)).alongWith(new SetSlowMode(m_robotDrive, true))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).alongWith(new SetSlowMode(m_robotDrive, false))));
     m_OperatorController.leftBumper().whileTrue(new SetMechanismState(IntakeState.OUTTAKING, ShooterState.OUTTAKING)).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
 
     m_OperatorController.button(8).whileTrue(Commands.run(() -> m_PivotSubsystem.setGoal((2*Math.PI/3)*Math.abs(m_OperatorController.getRawAxis(1)))));
@@ -180,12 +193,25 @@ public class RobotContainer {
     // test pivot down on intake
     // check dashboard/debugmode
     // 
+    // m_OperatorController.b().whileTrue(new DriveToTarget()).onFalse(new InstantCommand(()->currentAlignPath.cancel()));
+    // ALIGN CODE ^^^^
+
+    m_OperatorController.rightStick().whileTrue(new SetClimbRightPower(m_Climber2, 1).alongWith(new SetClimbLeftPower(m_Climber, 1)));
+    
+    
+    
+    //.andTh  
+    // en(()-> currentAlignPath));
 
     m_OperatorController.start().onTrue(new SetPivotPosition(m_PivotSubsystem, true));
     
     m_OperatorController.povUp().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot));
     m_OperatorController.povDown().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kAmpPosition));
     m_OperatorController.povRight().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition));
+
+
+   
+
 
 
 

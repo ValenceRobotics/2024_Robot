@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.394057915935381,
-        "y": 6.985103093013204
+        "x": 2.5196341119499284,
+        "y": 7.015965109624455
       },
       "prevControl": {
-        "x": 2.961989683377863,
-        "y": 6.985103093013204
+        "x": 1.5629115970011396,
+        "y": 7.67435479733115
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,8 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 0,
+      "waypointRelativePos": 0.1,
+      "rotationDegrees": -114.3624530153122,
       "rotateFast": true
     }
   ],
@@ -39,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "intakeStart",
-      "waypointRelativePos": 0.55,
+      "waypointRelativePos": 0.65,
       "command": {
         "type": "sequential",
         "data": {

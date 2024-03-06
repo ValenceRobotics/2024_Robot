@@ -14,16 +14,16 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ClimberSubsystem extends SubsystemBase {
+public class ClimberSubsystem2 extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
 
-    private final CANSparkMax climbMotor1;
-    //private final CANSparkMax climbMotor2;
+    //private final CANSparkMax climbMotor1;
+    private final CANSparkMax climbMotor2;
     //string pot
 
-  public ClimberSubsystem() {
-    climbMotor1 = createClimberController(ClimberConstants.climbMotor1Id, false);
-    //climbMotor2 = createClimberController(ClimberConstants.climbMotor2Id, false);
+  public ClimberSubsystem2() {
+    //climbMotor1 = createClimberController(ClimberConstants.climbMotor1Id, false);
+    climbMotor2 = createClimberController(ClimberConstants.climbMotor2Id, false);
 
 
   }
@@ -32,16 +32,16 @@ public class ClimberSubsystem extends SubsystemBase {
 
 
   public void setClimbPower(double power) {
-    climbMotor1.set(power);
-    //climbMotor2.set(power);
+    //climbMotor1.set(power);
+    climbMotor2.set(power);
   }
 
   public void setLeftPower(double power) {
-    climbMotor1.set(power);
+    //climbMotor1.set(power);
   }
 
   public void setRightPower(double power) {
-    //climbMotor2.set(power);
+    climbMotor2.set(power);
   }
 
 

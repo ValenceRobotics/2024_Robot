@@ -39,6 +39,13 @@ public final class Constants {
    public static Pose2d blueTarget = new Pose2d(0.5, 5.53, new Rotation2d(Units.degreesToRadians(180)));
    public static Pose2d redTarget =  new Pose2d(16.1, 5.53, new Rotation2d(Units.degreesToRadians(0)));
 
+   public static Pose2d blueLineupSub = new Pose2d(1.36, 5.53, new Rotation2d(Units.degreesToRadians(180)));
+   public static Pose2d redLineupSub =  new Pose2d(15.18, 5.53, new Rotation2d(Units.degreesToRadians(0)));
+
+   public static Pose2d blueLineupAmp = new Pose2d(1.81, 7.65, new Rotation2d(Units.degreesToRadians(90)));
+   public static Pose2d redLineupAmp =  new Pose2d(14.7, 7.65, new Rotation2d(Units.degreesToRadians(90)));
+
+
 
   }
 
@@ -90,11 +97,11 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kPivotControllerConstraints = new TrapezoidProfile.Constraints(
       0.5, 0);
 
-    public static final double kHomePosition = 0.3;
+    public static final double kHomePosition = 0.5;
     public static final double kAmpPosition = 2.01;
     public static final double kIntakePosition = 0.02;
 
-    public static final double kSubwooferShot = 1.17- Units.degreesToRadians(7.5);
+    public static final double kSubwooferShot = 1.17;//- Units.degreesToRadians(7.5);
 
     public static final double kSubwooferSideShot = 1.17- Units.degreesToRadians(7.5);
 

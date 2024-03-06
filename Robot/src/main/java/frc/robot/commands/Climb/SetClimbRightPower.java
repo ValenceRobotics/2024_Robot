@@ -10,12 +10,13 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberSubsystem2;
 import frc.robot.subsystems.PivotSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class SetClimbRightPower extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ClimberSubsystem m_Climber;
+  private final ClimberSubsystem2 m_Climber;
   private final double m_power;
 
 
@@ -25,7 +26,7 @@ public class SetClimbRightPower extends Command {
    * 
    * @param subsystem The subsystem used by this command.
    */
-  public SetClimbRightPower(ClimberSubsystem climber, double power) {
+  public SetClimbRightPower(ClimberSubsystem2 climber, double power) {
     this.m_Climber = climber;
     this.m_power = power;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -41,7 +42,7 @@ public class SetClimbRightPower extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Climber.setRightPower(m_power);
+    m_Climber.setClimbPower(m_power);
 
 
   }
@@ -49,7 +50,7 @@ public class SetClimbRightPower extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Climber.setRightPower(0);
+    m_Climber.setClimbPower(0);
 
   }
 

@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -71,7 +72,7 @@ public class DriveSubsystem extends SubsystemBase {
   //private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
   private final Pigeon2 m_gyro = new Pigeon2(5);
 
-
+  public final Field2d m_field = new Field2d();
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
   private double m_currentTranslationDir = 0.0;
@@ -160,6 +161,8 @@ public class DriveSubsystem extends SubsystemBase {
             },
             this // Reference to this subsystem to set requirements
     );
+
+    SmartDashboard.putData("Field", m_field);
   }
 
   @Override
@@ -232,7 +235,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
 
-
+    m_field.setRobotPose(m_odometry.getEstimatedPosition());
 
     
 
