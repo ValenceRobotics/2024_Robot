@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.FieldMeasurements;
 import frc.robot.Constants.IntakeState;
 import frc.robot.Constants.OIConstants;
@@ -35,6 +36,7 @@ import frc.robot.commands.Climb.SetClimbLeftPower;
 import frc.robot.commands.Climb.SetClimbRightPower;
 import frc.robot.commands.Manipulator.SetMechanismState;
 import frc.robot.commands.drive.SetSlowMode;
+import frc.robot.commands.drive.SnapToDirection;
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.Align.AlignToTarget;
 import frc.robot.commands.drive.Align.DriveToTarget;
@@ -81,7 +83,7 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    CameraServer.startAutomaticCapture();
+    //CameraServer.startAutomaticCapture();
 
     DataLogManager.stop();
     
@@ -111,6 +113,9 @@ public class RobotContainer {
 
     
     );
+
+    //ShootTowardsOurside Auto
+   
 
 
     NamedCommands.registerCommand("intakeStart", new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition).alongWith(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING)));
@@ -148,6 +153,15 @@ public class RobotContainer {
         .whileTrue(new SetMechanismState(IntakeState.SHOOTING)).onFalse(new SetMechanismState(IntakeState.STOPPED).andThen(new WaitCommand(0.5).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition))));
 
     new JoystickButton(m_driverController, 12).onTrue(new InstantCommand(m_robotDrive::resetGyro));
+
+
+    new POVButton(m_driverController, 0).onTrue(new SnapToDirection(m_robotDrive, 0, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+                            OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+                            OIConstants.kDriveDeadband)));
+    // new POVButton(m_driverController, 0).onTrue(new SnapToDirection(m_robotDrive, 0, null, null));
+    // new POVButton(m_driverController, 180).onTrue(new SnapToDirection(m_robotDrive, 0, null, null));
+    // new POVButton(m_driverController, 270).onTrue(new SnapToDirection(m_robotDrive, 0, null, null));
+
 
     new JoystickButton(m_driverController,2)
     .whileTrue(new SetSlowMode(m_robotDrive, true))

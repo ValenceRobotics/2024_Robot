@@ -35,7 +35,7 @@
       "rotateFast": false
     },
     {
-      "waypointRelativePos": 0.6,
+      "waypointRelativePos": 0.75,
       "rotationDegrees": 0,
       "rotateFast": true
     }
@@ -78,8 +78,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 10.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
