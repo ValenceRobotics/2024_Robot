@@ -21,7 +21,7 @@ public class AlignToAmp {
 
         // Create the constraints to use while pathfinding. The constraints defined in the path will only be used for the path.
         static PathConstraints constraints = new PathConstraints(
-        0.3, 1.0,
+        1, 2.0,
         Units.degreesToRadians(180), Units.degreesToRadians(360));
 
         // Since AutoBuilder is configured, we can use it to build pathfinding commands

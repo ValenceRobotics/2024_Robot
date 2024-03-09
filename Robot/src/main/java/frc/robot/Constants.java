@@ -78,7 +78,8 @@ public final class Constants {
     }
   }
   public static enum ShooterState {
-    STOPPED(0,0), SHOOTING(0.9,1), INTAKING(-0.6,-0.6),OUTTAKING(0.3,0.3), AMP(0.125,0.15);
+    STOPPED(0,0), SHOOTING(0.9,1), INTAKING(-0.6,-0.6),OUTTAKING(0.3,0.3), AMP(0.125,0.15), TRAP(0.31, 0.38
+    );
 
     public final double lowSpeed;
     public final double highSpeed;

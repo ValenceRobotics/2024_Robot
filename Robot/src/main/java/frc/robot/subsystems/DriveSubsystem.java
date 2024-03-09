@@ -195,14 +195,23 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Update the odometry in the periodic block
 
-    var bruh = RobotContainer.m_PoseEstimator.getEstimator();
-    var visionPose = bruh.update();
-    if(visionPose.isPresent()) {
-      var huh = visionPose.get();
+    var bruh = RobotContainer.m_PoseEstimator.getEstimatorFront();
+   // var rearPoseEstimator = RobotContainer.m_PoseEstimator.getEstimatorBack();
+    var visionPoseFront = bruh.update();
+   // var visionPoseBack = rearPoseEstimator.update();
+    if(visionPoseFront.isPresent()) {
+      var huh = visionPoseFront.get();
       Pose3d pose3d = huh.estimatedPose;
       m_odometry.addVisionMeasurement(pose3d.toPose2d(), huh.timestampSeconds);
-      SmartDashboard.putString("pose from vision ", pose3d.toPose2d().toString());
+      SmartDashboard.putString("pose from vision front ", pose3d.toPose2d().toString());
     }
+
+    // if (visionPoseBack.isPresent()) {
+    //   var huh2 = visionPoseBack.get();
+    //   Pose3d pose3dback = huh2.estimatedPose;
+    //   m_odometry.addVisionMeasurement(pose3dback.toPose2d(), huh2.timestampSeconds);
+    //   SmartDashboard.putString("pose from vision back", pose3dback.toPose2d().toString());
+    // }
 
 
       // Update pose estimator with the best visible target

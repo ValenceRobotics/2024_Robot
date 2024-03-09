@@ -18,15 +18,20 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PoseEstimator extends SubsystemBase {
     private AprilTagFieldLayout layout;
-    private PhotonCamera cam;
-    public Transform3d robotToCam;
-    private PhotonPoseEstimator poseEstimator;
-    private ArrayList<Pair<PhotonCamera, Transform3d>> camList;
+    private PhotonCamera camFront;
+    public Transform3d robotToCamFront;
+    private PhotonPoseEstimator poseEstimatorFront;
+
+    // private PhotonCamera camBack;
+    // public Transform3d robotToCamBack;
+    // private PhotonPoseEstimator poseEstimatorBack;
+    // private ArrayList<Pair<PhotonCamera, Transform3d>> camList;
 
     // private final Supplier<Rotation2d> rotationSupplier;
     // private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
@@ -42,12 +47,14 @@ public class PoseEstimator extends SubsystemBase {
 
     public PoseEstimator() {
 
-        cam = new PhotonCamera("visionCam");
+        camFront = new PhotonCamera("visionCamFront");
+        //camBack = new PhotonCamera("visionCamBack");
         //to configure
-        robotToCam = new Transform3d(new Translation3d(0.03, -0.32, 0.435), new Rotation3d(0,0,0));
+        robotToCamFront = new Transform3d(new Translation3d(0.0089, -0.32, 0.435), new Rotation3d(0,-Units.degreesToRadians(30),0));
+       // robotToCamBack = new Transform3d(new Translation3d(-0.1113,-0.32,0.435), new Rotation3d(0,Units.degreesToRadians(33),Units.degreesToRadians(180)));
         //numbers reflect current
-        camList = new ArrayList<>();
-        camList.add(new Pair<PhotonCamera, Transform3d>(cam, robotToCam));
+        //camList = new ArrayList<>();
+        //camList.add(new Pair<PhotonCamera, Transform3d>(camFront, robotToCamFront));
 
         // poseEstimator = new SwerveDrivePoseEstimator(
         // DrivetrainConstants.KINEMATICS,
@@ -65,12 +72,18 @@ public class PoseEstimator extends SubsystemBase {
         layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     
         // poseEstimator = new RobotPoseEstimator(layout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camList);
-        poseEstimator = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cam, robotToCam);
+        poseEstimatorFront = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camFront, robotToCamFront);
+        //poseEstimatorBack = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camBack, robotToCamBack);
+
     }
 
-    public PhotonPoseEstimator getEstimator(){
-      return poseEstimator;
+    public PhotonPoseEstimator getEstimatorFront(){
+      return poseEstimatorFront;
     }
+
+    // public PhotonPoseEstimator getEstimatorBack(){
+    //   return poseEstimatorBack;
+    // }
 
         @Override
         public void periodic() {
@@ -97,8 +110,8 @@ public class PoseEstimator extends SubsystemBase {
 
     }
       
-    public PhotonPipelineResult getLatest() {
-      return cam.getLatestResult();
+    public PhotonPipelineResult getLatestFront() {
+      return camFront.getLatestResult();
     }
         public double getX(){
           return x;
