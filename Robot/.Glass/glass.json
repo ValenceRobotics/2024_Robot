@@ -1,0 +1,18 @@
+{
+  "NetworkTables": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Dashboard/Auto Chooser": "String Chooser",
+      "/Shuffleboard/Dashboard/Debug Mode": "String Chooser",
+      "/Shuffleboard/Pivot/pid test": "PIDController",
+      "/SmartDashboard/Field": "Field2d"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "8429"
+  }
+}

@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
@@ -45,6 +46,7 @@ import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -145,9 +147,9 @@ public class DriveSubsystem extends SubsystemBase {
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     //TO CONFIGURE
                     new PIDConstants(5, 7, 0.75), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                    new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
                     4.5, // Max module speed, in m/s
-                    0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                    Units.inchesToMeters(18.7383297), // Drive base radius in meters. Distance from robot center to furthest module.
                     new ReplanningConfig() // Default path replanning config. See the API for the options here
             ),
             () -> {
@@ -168,6 +170,25 @@ public class DriveSubsystem extends SubsystemBase {
     //align code 14.66 7.57 -90
 
     SmartDashboard.putData("Field", m_field);
+
+            // Logging callback for current robot pose
+            PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
+              // Do whatever you want with the pose here
+              m_field.setRobotPose(pose);
+          });
+  
+          // Logging callback for target robot pose
+          PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+              // Do whatever you want with the pose here
+              m_field.getObject("target pose").setPose(pose);
+          });
+  
+          // Logging callback for the active path, this is sent as a list of poses
+          PathPlannerLogging.setLogActivePathCallback((poses) -> {
+              // Do whatever you want with the poses here
+              m_field.getObject("path").setPoses(poses);
+          });
+
   }
 
   @Override
@@ -240,7 +261,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
 
-    m_field.setRobotPose(m_odometry.getEstimatedPosition());
+    // m_field.setRobotPose(m_odometry.getEstimatedPosition());
 
     
 

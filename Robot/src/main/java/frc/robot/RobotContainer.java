@@ -38,6 +38,7 @@ import frc.robot.commands.Manipulator.SetMechanismState;
 import frc.robot.commands.drive.SetSlowMode;
 import frc.robot.commands.drive.SnapToDirection;
 import frc.robot.commands.drive.SwerveDrive;
+import frc.robot.commands.drive.Align.AlignToAmp;
 import frc.robot.commands.drive.Align.AlignToTarget;
 import frc.robot.commands.drive.Align.DriveToTarget;
 import frc.robot.subsystems.AprilTagCamera;
@@ -199,7 +200,7 @@ public class RobotContainer {
     // m_OperatorController.y().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     m_OperatorController.x().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kAmpPosition));
-    m_OperatorController.a().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition));
+    m_OperatorController.a().whileTrue(AlignToAmp.pathfindingCommand);
     // SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
     // m_OperatorController.y().onTrue(new SetPivotPosition(m_PivotSubsystem, ()->SmartDashboard.getNumber("test pivot loc", PivotConstants.kHomePosition)));
     m_OperatorController.y().whileTrue(new AlignToTarget(m_robotDrive));
