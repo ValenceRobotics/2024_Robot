@@ -32,6 +32,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
 
   public void setClimbPower(double power) {
+
+    
     climbMotor1.set(power);
     //climbMotor2.set(power);
   }
