@@ -32,6 +32,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.ShooterState;
 import frc.robot.commands.SetPivotPosition;
+import frc.robot.commands.ShootByDistance;
 import frc.robot.commands.Climb.SetClimbLeftPower;
 import frc.robot.commands.Climb.SetClimbRightPower;
 import frc.robot.commands.Manipulator.SetMechanismState;
@@ -159,9 +160,15 @@ public class RobotContainer {
     new POVButton(m_driverController, 0).onTrue(new SnapToDirection(m_robotDrive, 0, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
                             OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
                             OIConstants.kDriveDeadband)));
-    // new POVButton(m_driverController, 0).onTrue(new SnapToDirection(m_robotDrive, 0, null, null));
-    // new POVButton(m_driverController, 180).onTrue(new SnapToDirection(m_robotDrive, 0, null, null));
-    // new POVButton(m_driverController, 270).onTrue(new SnapToDirection(m_robotDrive, 0, null, null));
+    new POVButton(m_driverController, 90).onTrue(new SnapToDirection(m_robotDrive, 270, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+                            OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+                            OIConstants.kDriveDeadband)));
+    new POVButton(m_driverController, 180).onTrue(new SnapToDirection(m_robotDrive, 180, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+                            OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+                            OIConstants.kDriveDeadband)));
+    new POVButton(m_driverController, 270).onTrue(new SnapToDirection(m_robotDrive, 90, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+                            OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+                            OIConstants.kDriveDeadband)));
 
 
     new JoystickButton(m_driverController,2)
@@ -189,7 +196,7 @@ public class RobotContainer {
 
     m_OperatorController.button(8).whileTrue(Commands.run(() -> m_PivotSubsystem.setGoal((2*Math.PI/3)*Math.abs(m_OperatorController.getRawAxis(1)))));
     
-
+    m_OperatorController.button(10).whileTrue(new SetMechanismState(ShooterState.TRAP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
 
     
 
@@ -200,7 +207,12 @@ public class RobotContainer {
     // m_OperatorController.x().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
     // m_OperatorController.y().whileTrue(m_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    m_OperatorController.x().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kAmpPosition));
+    m_OperatorController.x().whileTrue(new ShootByDistance(m_robotDrive, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+                            OIConstants.kDriveDeadband),
+                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+                            OIConstants.kDriveDeadband),
+                    () -> -0.75*MathUtil.applyDeadband(m_driverController.getRawAxis(2),
+                            OIConstants.kDriveDeadband), m_PivotSubsystem)).onFalse(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition));
     m_OperatorController.a().whileTrue(AlignToAmp.pathfindingCommand);
     // SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
     // m_OperatorController.y().onTrue(new SetPivotPosition(m_PivotSubsystem, ()->SmartDashboard.getNumber("test pivot loc", PivotConstants.kHomePosition)));
@@ -224,7 +236,7 @@ public class RobotContainer {
     m_OperatorController.povUp().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot));
     m_OperatorController.povDown().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kAmpPosition));
     m_OperatorController.povRight().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition));
-
+    m_OperatorController.povLeft().onTrue(new SetPivotPosition(m_PivotSubsystem, 0.73));
 
    
 

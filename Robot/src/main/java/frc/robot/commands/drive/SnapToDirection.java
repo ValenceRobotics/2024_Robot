@@ -25,7 +25,7 @@ public class SnapToDirection extends Command {
   public SnapToDirection(DriveSubsystem dt, double angle, DoubleSupplier xSup, DoubleSupplier ySup) {
     this.dt = dt;
     this.desiredAngle = angle;
-    this.controller = new PIDController(0.025, 0, 0);
+    this.controller = new PIDController(0.025, 0, 0.001);
     this.xSup = xSup;
     this.ySup = ySup;
     currentAngle =angleWrap(dt.getHeading());
@@ -36,7 +36,8 @@ public class SnapToDirection extends Command {
 
   @Override
   public void initialize(){
-    desiredAngle = angleWrap(Math.toRadians(desiredAngle));
+    desiredAngle = angleWrap(desiredAngle);
+    controller.enableContinuousInput(-180, 180);
   }
 
   @Override
@@ -45,8 +46,9 @@ public class SnapToDirection extends Command {
     desiredAngle = angleWrap(desiredAngle);
     output = controller.calculate(currentAngle, desiredAngle);
 
+
     dt.drive(applyJoystickTransform(xSup.getAsDouble()), applyJoystickTransform(ySup.getAsDouble()), output,
-        dt.getFieldRelative(), true);
+        true, true);
 
   }
 

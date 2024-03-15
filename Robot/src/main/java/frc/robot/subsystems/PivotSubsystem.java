@@ -36,9 +36,9 @@ public class PivotSubsystem extends SubsystemBase {
     private final ArmFeedforward pivotFeedforward;
     private final AbsoluteEncoder absEncoder;
     private final double pivotVelocity;
-    private final PIDController pivotPIDController = new PIDController(.1, 0.00005, 0.00);
+    private final PIDController pivotPIDController = new PIDController(.1, 0.0005, 0); //0.12, 0.0005, 0.0002
     private double goal = PivotConstants.kHomePosition;
-    private double gravConst = 0.0783976825;
+    private double gravConst = 0.05;
     //abs encoder
     //possible feedforward?
 
@@ -57,8 +57,8 @@ public class PivotSubsystem extends SubsystemBase {
     pivotFeedforward = new ArmFeedforward(0, 0, 0);
     absEncoder = pivotMotor2.getAbsoluteEncoder(Type.kDutyCycle);
     pivotPIDController.enableContinuousInput(0, 2*Math.PI);
-    pivotPIDController.setTolerance(Units.degreesToRadians(3));
-    Shuffleboard.getTab("Pivot").add("pid test", pivotPIDController);
+    pivotPIDController.setTolerance(Units.degreesToRadians(1));
+    // Shuffleboard.getTab("Pivot").add("pid test", pivotPIDController);
 
     //absEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
     //absEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
@@ -71,11 +71,11 @@ public class PivotSubsystem extends SubsystemBase {
   //set position method
   //get position method
   
-  public void setPivotPosition(double position) {
-    //double pivotFeed = pivotFeedforward.calculate(position, pivotVelocity);
-    double pidFeed = pivotController.calculate(getPivotPosition(), position);
-    setPivotPower(-pidFeed);
-  }
+  // public void setPivotPosition(double position) {
+  //   //double pivotFeed = pivotFeedforward.calculate(position, pivotVelocity);
+  //   double pidFeed = pivotController.calculate(getPivotPosition(), position);
+  //   setPivotPower(-pidFeed);
+  // }
 
   public double getPivotPosition() {
     return absEncoder.getPosition() * 2* Math.PI;
@@ -173,8 +173,24 @@ public class PivotSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Pivot/Current 1", pivotMotor1.getOutputCurrent());
     SmartDashboard.putNumber("Pivot/Current 2", pivotMotor2.getOutputCurrent());
-    SmartDashboard.putNumber("Pivot/Output power", pivotMotor1.getAppliedOutput());
+    SmartDashboard.putNumber("Pivot/Output power", pivotPIDController.calculate(getPivotPosition(), this.goal));
+    SmartDashboard.putBoolean("Pivot/atsetpoint", pivotPIDController.atSetpoint());
+    SmartDashboard.putNumber("Pivot/p", pivotPIDController.getP());
+    SmartDashboard.putNumber("Pivot/d", pivotPIDController.getD());
+
     }
+
+    if (this.getGoal() == PivotConstants.kAmpPosition || this.getGoal() < this.getPivotPosition()) {
+      pivotPIDController.setP(0.1);
+      pivotPIDController.setD(0);
+    } else if (this.getGoal() == PivotConstants.kSubwooferShot || this.getGoal() == PivotConstants.kSubwooferSideShot) {
+      pivotPIDController.setP(0.15);
+      pivotPIDController.setD(0);
+    } else{
+      pivotPIDController.setP(0.4);
+      pivotPIDController.setD(0.1);
+    }
+
 
     if(this.getGoal() == PivotConstants.kIntakePosition){
       gravConst = 0;
@@ -189,10 +205,11 @@ public class PivotSubsystem extends SubsystemBase {
   
   
      } else {
-      gravConst = 0.078;
+      gravConst = 0.05;
       setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
   
      };
+
 
     //SmartDashboard.putData(shooterPower);
     // This method will be called once per scheduler run

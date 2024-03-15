@@ -34,6 +34,7 @@ public final class Constants {
   public static final class DebugConstants {
     public static boolean kDebugMode = false;
   }
+  
 
   public static final class FieldMeasurements {
    public static Pose2d blueTarget = new Pose2d(0.5, 5.53, new Rotation2d(Units.degreesToRadians(180)));
@@ -78,8 +79,7 @@ public final class Constants {
     }
   }
   public static enum ShooterState {
-    STOPPED(0,0), SHOOTING(0.9,1), INTAKING(-0.6,-0.6),OUTTAKING(0.3,0.3), AMP(0.125,0.15), TRAP(0.31, 0.38
-    );
+    STOPPED(0,0), SHOOTING(0.9,1), INTAKING(-0.6,-0.6),OUTTAKING(0.525,0.325), AMP(0.125,0.15), TRAP(0.375, 0.475);
 
     public final double lowSpeed;
     public final double highSpeed;
@@ -98,9 +98,10 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kPivotControllerConstraints = new TrapezoidProfile.Constraints(
       0.5, 0);
 
-    public static final double kHomePosition = 0.5;
+    public static final double kHomePosition = 0.3;
     public static final double kAmpPosition = 2.01;
     public static final double kIntakePosition = 0.02;
+    public static final double kPodiumPosition = 0.9;
 
     public static final double kSubwooferShot = 1.17;//- Units.degreesToRadians(7.5);
 
@@ -134,8 +135,8 @@ public final class Constants {
 
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2 + Math.PI / 2;
-    public static final double kFrontRightChassisAngularOffset = 0;
-    public static final double kBackLeftChassisAngularOffset = Math.PI;
+    public static final double kFrontRightChassisAngularOffset = 0 + Math.PI / 2;
+    public static final double kBackLeftChassisAngularOffset = Math.PI + Math.PI / 2;
     public static final double kBackRightChassisAngularOffset = Math.PI / 2 + Math.PI / 2;
 
     // SPARK MAX CAN IDs
