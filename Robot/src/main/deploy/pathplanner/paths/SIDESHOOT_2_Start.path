@@ -16,12 +16,28 @@
     },
     {
       "anchor": {
-        "x": 3.7232527597887275,
-        "y": 7.036539787365289
+        "x": 1.892106440855684,
+        "y": 7.0982638205807165
       },
       "prevControl": {
-        "x": 1.7892330521503153,
-        "y": 6.727919621252776
+        "x": 1.399880613197137,
+        "y": 7.180301458531642
+      },
+      "nextControl": {
+        "x": 2.3241746734144,
+        "y": 7.0262524484807205
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.8672755039745677,
+        "y": 6.738206960123193
+      },
+      "prevControl": {
+        "x": 5.863019244835481,
+        "y": 6.907948051485075
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,16 +46,16 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.3,
-      "rotationDegrees": 0.0,
-      "rotateFast": true
+      "waypointRelativePos": 1.1,
+      "rotationDegrees": -7.96865516948346,
+      "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "intakeStart",
-      "waypointRelativePos": 0.65,
+      "waypointRelativePos": 1.1,
       "command": {
         "type": "sequential",
         "data": {
@@ -56,7 +72,7 @@
     },
     {
       "name": "intakeStop",
-      "waypointRelativePos": 0.95,
+      "waypointRelativePos": 1.5,
       "command": {
         "type": "sequential",
         "data": {

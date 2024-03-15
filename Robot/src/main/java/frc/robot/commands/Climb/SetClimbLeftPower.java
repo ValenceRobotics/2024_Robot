@@ -43,6 +43,7 @@ public class SetClimbLeftPower extends Command {
   @Override
   public void execute() {
 
+  
     if (m_power == 1 && m_Climber.getExtendPosition() >= ClimberConstants.kMaxExtendPosition) {
       m_Climber.setClimbPower(0);
     } else if (m_power == -1 && m_Climber.getExtendPosition() <= ClimberConstants.kMinExtendPosition) {
