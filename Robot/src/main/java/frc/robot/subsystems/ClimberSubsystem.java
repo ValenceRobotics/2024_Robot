@@ -44,6 +44,10 @@ public class ClimberSubsystem extends SubsystemBase {
     //climbMotor2.set(power);
   }
 
+  public double getExtendPosition() {
+    return climbMotor1.getEncoder().getPosition();
+  }
+
 
 
   private CANSparkMax createClimberController(int port, boolean isInverted) {

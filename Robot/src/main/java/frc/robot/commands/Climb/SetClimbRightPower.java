@@ -9,6 +9,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ClimberSubsystem2;
 import frc.robot.subsystems.PivotSubsystem;
@@ -42,7 +43,15 @@ public class SetClimbRightPower extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
+    if (m_power == 1 && m_Climber.getExtendPosition() >= ClimberConstants.kMaxExtendPosition) {
+      m_Climber.setClimbPower(0);
+    } else if (m_power == -1 && m_Climber.getExtendPosition() <= ClimberConstants.kMinExtendPosition) {
+      m_Climber.setClimbPower(0);
+    } else {
     m_Climber.setClimbPower(m_power);
+    }
+
 
 
   }
