@@ -198,11 +198,11 @@ public class PivotSubsystem extends SubsystemBase {
 
       pivotPIDController.setD(0);
     } else{
-        pivotPIDController.setP(0.25);
+        pivotPIDController.setP(0.2);
       // pivotPIDController.setI(0.001);
 
-      pivotPIDController.setI(0.01);
-            pivotPIDController.setD(0.2);
+      pivotPIDController.setI(0.02);
+            pivotPIDController.setD(0.25);
 
     }
 
