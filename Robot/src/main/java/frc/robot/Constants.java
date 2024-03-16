@@ -63,8 +63,8 @@ public final class Constants {
     public static final int climbMotor1Id = 23;
     public static final int climbMotor2Id = 24;
 
-    public static final double kMax1ExtendPosition = -192;
-    public static final double kMax2ExtendPosition = -196;
+    public static final double kMax1ExtendPosition = -210.41;
+    public static final double kMax2ExtendPosition = -206.76;
 
     public static final double kMinExtendPosition = 0;
    }
@@ -84,7 +84,7 @@ public final class Constants {
     }
   }
   public static enum ShooterState {
-    STOPPED(0,0), SHOOTING(0.9,1), INTAKING(-0.6,-0.6),OUTTAKING(0.525,0.325), AMP(0.125,0.15), TRAP(0.375, 0.475);
+    STOPPED(0,0), SHOOTING(0.9,1), INTAKING(-0.6,-0.6),OUTTAKING(0.525,0.325), AMP(0.125,0.15), TRAP(0.35, 0.45);
 
     public final double lowSpeed;
     public final double highSpeed;
@@ -108,8 +108,7 @@ public final class Constants {
     public static final double kIntakePosition = 0.02;
     public static final double kPodiumPosition = 0.9;
 
-    public static final double kSubwooferShot = 1.17;//- Units.degreesToRadians(7.5);
-
+    public static final double kSubwooferShot = 1.28;
     public static final double kSubwooferSideShot = 1.17- Units.degreesToRadians(7.5);
 
 
@@ -171,7 +170,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.0762;
+    public static final double kWheelDiameterMeters = (0.0762);// * (2/1.94);
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);

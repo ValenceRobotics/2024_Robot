@@ -3,45 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.994979829556884,
-        "y": 4.001774820592678
+        "x": 4.052447603642075,
+        "y": 2.993615611291373
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9435431352047978,
-        "y": 6.203265338861936
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.4476227398552357,
-        "y": 7.386309308959902
-      },
-      "prevControl": {
-        "x": 1.4476227398552357,
-        "y": 7.386309308959902
-      },
-      "nextControl": {
-        "x": 3.4476227398552353,
-        "y": 7.386309308959902
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 4.134746314605412,
-        "y": 2.5924093953451064
-      },
-      "prevControl": {
-        "x": 5.88415253271609,
-        "y": 2.8662645946845786
-      },
-      "nextControl": {
-        "x": 2.385340096494731,
-        "y": 2.318554196005634
+        "x": 3.528878648665392,
+        "y": 2.086767580006017
       },
       "isLocked": false,
       "linkedName": null
@@ -55,6 +23,22 @@
         "x": 14.6895559956482,
         "y": 8.826536750817862
       },
+      "nextControl": {
+        "x": 14.6278319624257,
+        "y": 6.481023488362766
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 14.65869397903695,
+        "y": 7.653780119590314
+      },
+      "prevControl": {
+        "x": 14.65355030959917,
+        "y": 7.021108779059662
+      },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
@@ -62,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 2.7,
+      "waypointRelativePos": 0.7000000000000002,
       "rotationDegrees": -90.0,
       "rotateFast": false
     }
@@ -83,7 +67,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 90.48554583000814,
+    "rotation": -122.10625595511787,
     "velocity": 0
   },
   "useDefaultConstraints": true

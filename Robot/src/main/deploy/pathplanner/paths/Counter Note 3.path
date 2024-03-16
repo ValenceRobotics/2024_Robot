@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.74,
-        "y": 6.738206960123193
+        "x": 2.7973922614511895,
+        "y": 6.316426066436093
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4806128860378027,
-        "y": 7.448033342181972
+        "x": 3.7973922614511895,
+        "y": 6.316426066436093
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.892106440855684,
-        "y": 7.0982638205807165
+        "x": 7.982211052141404,
+        "y": 7.396596647829888
       },
       "prevControl": {
-        "x": 1.399880613197137,
-        "y": 7.180301458531642
-      },
-      "nextControl": {
-        "x": 2.3241746734144,
-        "y": 7.0262524484807205
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.931127666766612,
-        "y": 6.943953737531536
-      },
-      "prevControl": {
-        "x": 2.8694036335441093,
-        "y": 6.943953737531536
+        "x": 6.982211052141404,
+        "y": 7.396596647829888
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,18 +30,18 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.1,
-      "rotationDegrees": -7.96865516948346,
-      "rotateFast": false
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 1.3019526725788424,
+      "rotateFast": true
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "intakeStart",
-      "waypointRelativePos": 1.1,
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.7,
       "command": {
-        "type": "sequential",
+        "type": "parallel",
         "data": {
           "commands": [
             {
@@ -71,10 +55,10 @@
       }
     },
     {
-      "name": "intakeStop",
-      "waypointRelativePos": 1.5,
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.0,
       "command": {
-        "type": "sequential",
+        "type": "parallel",
         "data": {
           "commands": [
             {
@@ -102,7 +86,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -124.69515353123398,
+    "rotation": -170.41705527646744,
     "velocity": 0
   },
   "useDefaultConstraints": true

@@ -60,7 +60,6 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     CommandScheduler.getInstance().schedule(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
-    RobotContainer.m_robotDrive.resetOdometry(new Pose2d(0,0, new Rotation2d(0)));
   }
 
   @Override
@@ -115,6 +114,8 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+        RobotContainer.m_robotDrive.resetOdometry(new Pose2d(0,0, new Rotation2d(0)));
+
   }
 
   /** This function is called periodically during test mode. */

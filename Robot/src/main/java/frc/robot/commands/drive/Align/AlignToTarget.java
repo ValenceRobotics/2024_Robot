@@ -4,9 +4,10 @@
 
 package frc.robot.commands.drive.Align;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,12 +18,16 @@ import frc.robot.subsystems.DriveSubsystem;
 public class AlignToTarget extends Command {
   /** Creates a new AlignToTarget. */
   DriveSubsystem m_Drive;
-  PIDController thetaController = new PIDController(0.0025, 0, 0);
+  PIDController thetaController = new PIDController(0.01, 0, 0);
   boolean isRed;
   Pose2d target = null; 
+  DoubleSupplier xSup;
+  DoubleSupplier ySup;
   double delta = 100;
-  public AlignToTarget(DriveSubsystem drive) {
+  public AlignToTarget(DriveSubsystem drive, DoubleSupplier xSup, DoubleSupplier ySup) {
     this.m_Drive = drive;
+    this.xSup = xSup;
+    this.ySup = ySup;
     thetaController.enableContinuousInput(-180, 180);
     addRequirements(m_Drive);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -51,21 +56,17 @@ public class AlignToTarget extends Command {
   public void execute() {
       // calculate desired heading from current pose
       // reach it
-      var straightToTarget = target.getTranslation().minus(m_Drive.getPose().getTranslation()).getAngle().getDegrees();
+      var targetRotationPose = target.getTranslation().minus(m_Drive.getPose().getTranslation()).getAngle();
       
-      if(isRed) {
-      delta = straightToTarget + m_Drive.getHeading();
-      } else{
-
-        delta = straightToTarget + (m_Drive.getHeading() < 0 ? m_Drive.getHeading() % 180: 180-m_Drive.getHeading());
-      }
+      var delta = m_Drive.getPose().getRotation().minus(targetRotationPose).getDegrees();
 
     if(DebugConstants.kDebugMode){
 
       SmartDashboard.putNumber("Autoalign/AutoAlign Error", delta);
     }
 
-      m_Drive.drive(0, 0, thetaController.calculate(delta,0), false, true);
+
+      m_Drive.drive(xSup.getAsDouble(), ySup.getAsDouble(), thetaController.calculate(delta,0), false, true);
 
 
 
@@ -81,6 +82,6 @@ public class AlignToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(delta) < 3;
+    return false;
   }
 }

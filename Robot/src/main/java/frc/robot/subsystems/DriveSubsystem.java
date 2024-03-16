@@ -117,6 +117,10 @@ public class DriveSubsystem extends SubsystemBase {
     return slowMode;
   }
 
+  public double calcPivotAngle() {
+    return 1.12-(0.288*Math.log(this.getDistToTarget()));
+  }
+
   public void setSlowMode(boolean slowMode) {
     this.slowMode = slowMode;
   }
@@ -148,7 +152,7 @@ public class DriveSubsystem extends SubsystemBase {
                     //TO CONFIGURE
                     new PIDConstants(5, 7, 0.75), // Translation PID constants
                     new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
-                    4.5, // Max module speed, in m/s
+    5.7, // Max module speed, in m/s
                     Units.inchesToMeters(18.7383297), // Drive base radius in meters. Distance from robot center to furthest module.
                     new ReplanningConfig() // Default path replanning config. See the API for the options here
             ),
@@ -309,7 +313,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
 
-    m_gyro.setYaw(pose.getRotation().getDegrees());
+    m_gyro.setYaw(180 + pose.getRotation().getDegrees() );
 
     m_odometry.resetPosition(
       m_gyro.getRotation2d(),
@@ -323,6 +327,8 @@ public class DriveSubsystem extends SubsystemBase {
 
         
   }
+
+   
   
 
 
@@ -460,7 +466,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return m_gyro.getRotation2d().getDegrees();
+    return this.getPose().getRotation().getDegrees();
   }
 
   /**

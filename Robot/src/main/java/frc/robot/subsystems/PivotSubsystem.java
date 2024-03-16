@@ -180,15 +180,30 @@ public class PivotSubsystem extends SubsystemBase {
 
     }
 
-    if (this.getGoal() == PivotConstants.kAmpPosition || this.getGoal() < this.getPivotPosition()) {
-      pivotPIDController.setP(0.1);
+    pivotPIDController.setI(0);
+
+    if(this.getGoal() == PivotConstants.kHomePosition) {
+        pivotPIDController.setP(0.1 + (this.getGoal() > this.getPivotPosition() ? 0.2 : 0));
+        pivotPIDController.setD(0);
+    }
+
+   else if (this.getGoal() == PivotConstants.kAmpPosition ) {
+      pivotPIDController.setP(0.11);
+            pivotPIDController.setI(0.001);
+
       pivotPIDController.setD(0);
     } else if (this.getGoal() == PivotConstants.kSubwooferShot || this.getGoal() == PivotConstants.kSubwooferSideShot) {
       pivotPIDController.setP(0.15);
+      pivotPIDController.setI(0.001);
+
       pivotPIDController.setD(0);
     } else{
-      pivotPIDController.setP(0.4);
-      pivotPIDController.setD(0.1);
+        pivotPIDController.setP(0.25);
+      // pivotPIDController.setI(0.001);
+
+      pivotPIDController.setI(0.01);
+            pivotPIDController.setD(0.2);
+
     }
 
 
@@ -206,6 +221,9 @@ public class PivotSubsystem extends SubsystemBase {
   
      } else {
       gravConst = 0.05;
+
+      
+
       setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
   
      };

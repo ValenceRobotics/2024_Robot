@@ -1,0 +1,79 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7193498096269378,
+      "y": 6.71763228238236
+    },
+    "rotation": -120.25643716352927
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shootUpClose"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SIDESHOOT_2_Start"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BLUE_LEFT_SIDE_CLOSE4_1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootUpClose"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Counter Note 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Counter Note 3 Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootUpClose"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Counter Note 4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Counter Note 4 Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootUpClose"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
