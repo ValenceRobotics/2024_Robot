@@ -44,13 +44,13 @@ public class SetClimbRightPower extends Command {
   @Override
   public void execute() {
     
-    if (m_power == 1 && m_Climber.getExtendPosition() >= ClimberConstants.kMaxExtendPosition) {
+    if (m_power == -1 && m_Climber.getExtendPosition() <= ClimberConstants.kMax2ExtendPosition) {
       m_Climber.setClimbPower(0);
-    } else if (m_power == -1 && m_Climber.getExtendPosition() <= ClimberConstants.kMinExtendPosition) {
+    } else if (m_power == 1 && m_Climber.getExtendPosition() >= ClimberConstants.kMinExtendPosition) {
       m_Climber.setClimbPower(0);
     } else {
     m_Climber.setClimbPower(m_power);
-    }
+  }
 
 
 

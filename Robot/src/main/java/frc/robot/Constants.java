@@ -63,8 +63,10 @@ public final class Constants {
     public static final int climbMotor1Id = 23;
     public static final int climbMotor2Id = 24;
 
-    public static final double kMaxExtendPosition = 10;
-    public static final double kMinExtendPosition = 1;
+    public static final double kMax1ExtendPosition = -192;
+    public static final double kMax2ExtendPosition = -196;
+
+    public static final double kMinExtendPosition = 0;
    }
 
   public static class IntakeFeederConstants {

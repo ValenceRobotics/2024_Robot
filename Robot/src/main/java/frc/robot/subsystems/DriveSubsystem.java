@@ -308,6 +308,9 @@ public class DriveSubsystem extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
+
+    m_gyro.setYaw(pose.getRotation().getDegrees());
+
     m_odometry.resetPosition(
       m_gyro.getRotation2d(),
         new SwerveModulePosition[] {
@@ -317,6 +320,8 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         },
         pose);
+
+        
   }
   
 

@@ -87,6 +87,8 @@ public class ClimberSubsystem2 extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Climber2/position" , getExtendPosition());
+
     //SmartDashboard.putData(shooterPower);
     // This method will be called once per scheduler run
   }

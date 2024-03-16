@@ -33,7 +33,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public void setClimbPower(double power) {
 
-    
+
     climbMotor1.set(power);
     //climbMotor2.set(power);
   }
@@ -89,6 +89,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Climber1/position" , getExtendPosition());
     //SmartDashboard.putData(shooterPower);
     // This method will be called once per scheduler run
   }

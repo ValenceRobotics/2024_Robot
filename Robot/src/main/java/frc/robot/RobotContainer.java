@@ -213,7 +213,13 @@ public class RobotContainer {
                             OIConstants.kDriveDeadband),
                     () -> -0.75*MathUtil.applyDeadband(m_driverController.getRawAxis(2),
                             OIConstants.kDriveDeadband), m_PivotSubsystem)).onFalse(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition));
-    m_OperatorController.a().whileTrue(AlignToAmp.pathfindingCommand);
+
+
+
+
+    // m_OperatorController.a().whileTrue(AlignToAmp.pathfindingCommand);
+      new JoystickButton(m_driverController, 4).whileTrue(AlignToAmp.pathfindingCommand);
+
     // SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
     // m_OperatorController.y().onTrue(new SetPivotPosition(m_PivotSubsystem, ()->SmartDashboard.getNumber("test pivot loc", PivotConstants.kHomePosition)));
     m_OperatorController.y().whileTrue(new AlignToTarget(m_robotDrive));
