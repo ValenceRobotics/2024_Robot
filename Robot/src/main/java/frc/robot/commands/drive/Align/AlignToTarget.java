@@ -66,7 +66,7 @@ public class AlignToTarget extends Command {
     }
 
 
-      m_Drive.drive(xSup.getAsDouble(), ySup.getAsDouble(), thetaController.calculate(delta,0), false, true);
+      m_Drive.drive(xSup.getAsDouble(), ySup.getAsDouble(), thetaController.calculate(delta,0), true, true);
 
 
 

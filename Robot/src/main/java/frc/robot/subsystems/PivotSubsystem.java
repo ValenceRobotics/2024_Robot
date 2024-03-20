@@ -209,6 +209,13 @@ public class PivotSubsystem extends SubsystemBase {
 
     if(this.getGoal() == PivotConstants.kIntakePosition){
       gravConst = 0;
+
+     pivotPIDController.setP(0.4);
+      // pivotPIDController.setI(0.001);
+
+      pivotPIDController.setI(0.0);
+            pivotPIDController.setD(0.0);
+
         setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
 
     }

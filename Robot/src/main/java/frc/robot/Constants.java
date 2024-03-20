@@ -75,7 +75,7 @@ public final class Constants {
   }
 
   public static enum IntakeState {
-    STOPPED(0,0), SHOOTING(0,-1), INTAKING(0.8,0.6), OUTTAKING(-0.3,-0.3);
+    STOPPED(0,0), SHOOTING(0,-1), INTAKING(0.8,0.75), OUTTAKING(-0.3,-0.3);
     public final double intakeSpeed;
     public final double feederSpeed;
     private IntakeState(double intake, double feeder){

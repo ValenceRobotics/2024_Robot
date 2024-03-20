@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -114,7 +115,7 @@ public class RobotContainer {
                                                
     );
 
-    NamedCommands.registerCommand("shootPodium", (new SetPivotPosition(m_PivotSubsystem, PivotConstants.kPodiumPosition).withTimeout(0.01) )
+    NamedCommands.registerCommand("shootDistance", (new SetPivotPosition(m_PivotSubsystem, m_robotDrive.calcPivotAngle()).withTimeout(0.01) )
                                              .andThen(new SetMechanismState( ShooterState.SHOOTING))
                                             .andThen(new WaitCommand(1))
                                             .andThen(new SetMechanismState(IntakeState.SHOOTING))
@@ -138,10 +139,11 @@ public class RobotContainer {
     m_autoChooser = AutoBuilder.buildAutoChooser();
     Shuffleboard.getTab("Dashboard").add("Auto Chooser", m_autoChooser);
     SendableChooser<Boolean> debugMode = new SendableChooser<>();
+    
     debugMode.addOption("Enabled", true);
     debugMode.setDefaultOption("Disabled", false);
     debugMode.onChange(x-> Constants.DebugConstants.kDebugMode = x);
-    Shuffleboard.getTab("Dashboard").add("Debug Mode", debugMode);
+    Shuffleboard.getTab("Dashboard").add("Debug Mode", debugMode).withWidget(BuiltInWidgets.kToggleSwitch);
 
 
 
@@ -200,8 +202,9 @@ public class RobotContainer {
     m_OperatorController.leftTrigger().whileTrue(new SetMechanismState(ShooterState.AMP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
 
     new JoystickButton(m_driverController, 4).whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition)).alongWith(new SetSlowMode(m_robotDrive, true))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).alongWith(new SetSlowMode(m_robotDrive, false))));
+
     m_OperatorController.leftBumper().whileTrue(new SetMechanismState(IntakeState.OUTTAKING, ShooterState.OUTTAKING)).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
-    m_OperatorController.rightBumper().whileTrue(new SetMechanismState(ShooterState.TRAP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
+    m_OperatorController.rightBumper().whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition)).alongWith(new SetSlowMode(m_robotDrive, true))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).alongWith(new SetSlowMode(m_robotDrive, false))));
 
     m_OperatorController.button(8).whileTrue(Commands.run(() -> m_PivotSubsystem.setGoal((2*Math.PI/3)*Math.abs(m_OperatorController.getRawAxis(1)))));
     
