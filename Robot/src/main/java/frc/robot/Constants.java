@@ -110,6 +110,7 @@ public final class Constants {
 
     public static final double kSubwooferShot = 1.28;
     public static final double kSubwooferSideShot = 1.17- Units.degreesToRadians(7.5);
+    public static final double kBackshotPosition = 2.1;
 
 
 

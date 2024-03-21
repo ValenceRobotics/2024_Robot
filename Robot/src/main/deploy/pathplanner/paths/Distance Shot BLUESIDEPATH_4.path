@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 9.25,
-        "y": 0.77
+        "x": 8.231349922415486,
+        "y": 0.7489523983787291
       },
       "prevControl": null,
       "nextControl": {
-        "x": 9.46603411627876,
-        "y": 0.7494253222591661
+        "x": 8.447384038694246,
+        "y": 0.7283777206378952
       },
       "isLocked": false,
       "linkedName": null
@@ -36,25 +36,7 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.1,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "intakeStop"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 10.0,
     "maxAcceleration": 5.0,

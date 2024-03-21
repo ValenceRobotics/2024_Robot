@@ -42,6 +42,7 @@ import frc.robot.commands.drive.SnapToDirection;
 import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.Align.AlignToAmp;
 import frc.robot.commands.drive.Align.AlignToTarget;
+import frc.robot.commands.drive.Align.AlignToTargetAuto;
 import frc.robot.commands.drive.Align.DriveToTarget;
 //import frc.robot.subsystems.AprilTagCamera;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -115,7 +116,17 @@ public class RobotContainer {
                                                
     );
 
-    NamedCommands.registerCommand("shootDistance", (new SetPivotPosition(m_PivotSubsystem, m_robotDrive.calcPivotAngle()).withTimeout(0.01) )
+    NamedCommands.registerCommand("shootDistance", (new SetPivotPosition(m_PivotSubsystem, m_robotDrive.calcPivotAngle()).withTimeout(0.01).alongWith(new AlignToTargetAuto(m_robotDrive)))
+                                             .andThen(new SetMechanismState( ShooterState.SHOOTING))
+                                            .andThen(new WaitCommand(1))
+                                            .andThen(new SetMechanismState(IntakeState.SHOOTING))
+                                            .andThen(new WaitCommand(0.5))
+                                              .andThen(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED))
+                                              .andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).withTimeout(0.01))
+                                               
+    );
+
+        NamedCommands.registerCommand("giveBackshot", (new SetPivotPosition(m_PivotSubsystem, PivotConstants.kBackshotPosition).withTimeout(0.01))
                                              .andThen(new SetMechanismState( ShooterState.SHOOTING))
                                             .andThen(new WaitCommand(1))
                                             .andThen(new SetMechanismState(IntakeState.SHOOTING))
