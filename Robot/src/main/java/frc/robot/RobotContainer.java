@@ -137,13 +137,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("intakeStop", new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition)));
 
     m_autoChooser = AutoBuilder.buildAutoChooser();
-    Shuffleboard.getTab("Dashboard").add("Auto Chooser", m_autoChooser);
+    Shuffleboard.getTab("Autonomous").add("Auto Chooser", m_autoChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     SendableChooser<Boolean> debugMode = new SendableChooser<>();
-    
-    debugMode.addOption("Enabled", true);
-    debugMode.setDefaultOption("Disabled", false);
+    // debugMode.addOption("Enabled", true);
+    // debugMode.setDefaultOption("Disabled", false);
     debugMode.onChange(x-> Constants.DebugConstants.kDebugMode = x);
-    Shuffleboard.getTab("Dashboard").add("Debug Mode", debugMode).withWidget(BuiltInWidgets.kToggleSwitch);
+    Shuffleboard.getTab("Autonomous").add("Debug Mode", debugMode).withWidget(BuiltInWidgets.kToggleSwitch);
 
 
 
