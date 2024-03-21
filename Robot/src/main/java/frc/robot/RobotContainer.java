@@ -228,7 +228,7 @@ public class RobotContainer {
 
 
     // m_OperatorController.a().whileTrue(AlignToAmp.pathfindingCommand);
-      new JoystickButton(m_driverController, 8).whileTrue(AlignToAmp.pathfindingCommand);
+      new JoystickButton(m_driverController, 8).whileTrue(new AlignToAmp(m_robotDrive));
 
     // SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
     // m_OperatorController.y().onTrue(new SetPivotPosition(m_PivotSubsystem, ()->SmartDashboard.getNumber("test pivot loc", PivotConstants.kHomePosition)));
