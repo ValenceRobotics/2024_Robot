@@ -187,9 +187,9 @@ public class PivotSubsystem extends SubsystemBase {
         pivotPIDController.setD(0);
     }
 
-   else if (this.getGoal() == PivotConstants.kAmpPosition ) {
+   else if (this.getGoal() == PivotConstants.kAmpPosition || this.getGoal() == PivotConstants.kBackshotPosition ) {
       pivotPIDController.setP(0.11);
-            pivotPIDController.setI(0.001);
+      pivotPIDController.setI(0.001);
 
       pivotPIDController.setD(0);
     } else if (this.getGoal() == PivotConstants.kSubwooferShot || this.getGoal() == PivotConstants.kSubwooferSideShot) {
@@ -214,7 +214,7 @@ public class PivotSubsystem extends SubsystemBase {
       // pivotPIDController.setI(0.001);
 
       pivotPIDController.setI(0.0);
-            pivotPIDController.setD(0.0);
+      pivotPIDController.setD(0.0);
 
         setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
 

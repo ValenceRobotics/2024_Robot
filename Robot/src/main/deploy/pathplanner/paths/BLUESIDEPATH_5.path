@@ -84,7 +84,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "BLUESIDEPATH",
   "previewStartingState": {
     "rotation": 147.4259428654275,
     "velocity": 0

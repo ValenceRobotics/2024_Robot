@@ -59,6 +59,7 @@ public class AlignToTargetAuto extends Command {
       var delta = m_Drive.getPose().getRotation().minus(targetRotationPose).getDegrees();
 
 
+
       m_Drive.drive(0,0, thetaController.calculate(delta,0), true, true);
 
 

@@ -8,7 +8,10 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -39,6 +42,7 @@ public class ChaseNoteCmd extends Command {
     private DoubleSupplier ySup;
     private DoubleSupplier xSup;
     private DoubleSupplier rotSup;
+    private Transform2d noteTransform;
 
 
   public ChaseNoteCmd(DriveSubsystem dt, DoubleSupplier xSup, DoubleSupplier ySup, DoubleSupplier rotSup) {
@@ -65,11 +69,31 @@ public class ChaseNoteCmd extends Command {
         xDist += robotToCam.getX();
         yDist += robotToCam.getY();
 
+        noteTransform = new Transform2d(new Translation2d(xDist, yDist), new Rotation2d());
+
+        Pose2d drivePose = m_dt.getPose();
+        
+        Pose2d endDrivePose = drivePose.plus(noteTransform);
+
+        
+        
+
         // Translation2d noteTranslation = new Translation2d(xDist, yDist);
         // Translation2d newPose = new Translation2d(0,0);
         // double theta = noteTranslation.minus(newPose).getAngle().getDegrees();
 
-        m_dt.drive(xController.calculate(xDist, 0), yController.calculate(yDist, 0), 0, false, true);
+        //m_dt.drive(xController.calculate(xDist, 0), yController.calculate(yDist, 0), 0, false, true);
+
+        m_dt.drive(xController.calculate(endDrivePose.getX()-m_dt.getPose().getX(),0), yController.calculate(endDrivePose.getY()-m_dt.getPose().getY(),0), 0, true, true);
+
+        // double theta = (Units.degreesToRadians(270+m_dt.getPose().getRotation().getDegrees()));
+
+        // double yAdjust = yController.calculate(yDist);
+        // double xAdjust = Math.sin(theta) * yAdjust;
+        // yAdjust = Math.cos(theta) * yAdjust;
+        // m_dt.drive(controller.calculate)
+
+        
     } else {
         m_dt.drive(
             applyJoystickTransform(xSup.getAsDouble()),
