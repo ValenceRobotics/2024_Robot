@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.FieldMeasurements;
 import frc.robot.Constants.IntakeState;
 import frc.robot.Constants.OIConstants;
@@ -305,6 +306,12 @@ public class RobotContainer {
     m_OperatorController.povDown().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kAmpPosition));
     m_OperatorController.povRight().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition));
     m_OperatorController.povLeft().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kPodiumPosition));
+
+
+    m_OperatorController.rightBumper().and(m_OperatorController.a()).whileTrue(m_PivotSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_OperatorController.rightBumper().and(m_OperatorController.b()).whileTrue(m_PivotSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_OperatorController.leftBumper().and(m_OperatorController.x()).whileTrue(m_PivotSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_OperatorController.leftBumper().and(m_OperatorController.y()).whileTrue(m_PivotSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
    
 

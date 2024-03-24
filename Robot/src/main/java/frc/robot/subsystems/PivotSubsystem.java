@@ -16,7 +16,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.MutableMeasure.mutable;
 
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -24,7 +28,13 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -45,14 +55,6 @@ public class PivotSubsystem extends SubsystemBase {
     private double gravConst = 0.05;
     //abs encoder
     //possible feedforward?
-
-  private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
-    new SysIdRoutine.Config(),
-    new SysIdRoutine.Mechanism(
-    (voltage) -> this.setPivotVolts(voltage.in(Volts)),
-    null, // No log consumer, since data is recorded by URCL
-    this
-  ));
 
   public PivotSubsystem() {
     pivotMotor1 = createPivotController(PivotConstants.pivotMotor1Id, false);
@@ -90,11 +92,37 @@ public class PivotSubsystem extends SubsystemBase {
   //   setPivotPower(-pidFeed);
   // }
 
+  private final MutableMeasure<Voltage> m_appliedVoltage = mutable(Volts.of(0));
+  private final MutableMeasure<Angle> m_angularPosition = mutable(Radians.of(0));
+  private final MutableMeasure<Velocity<Angle>> m_angularVelocity = mutable(RadiansPerSecond.of(0));
+
+  private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
+    new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(2.5), Second.of(15)),
+    new SysIdRoutine.Mechanism(
+    (Measure<Voltage> volts) -> {
+      this.setPivotVolts(volts.in(Volts));
+    },
+    log -> {
+      log.motor("pivotMotors")
+        .voltage(
+          m_appliedVoltage.mut_replace(this.getPivotVoltage(), Volts))
+          .angularPosition(m_angularPosition.mut_replace(this.getPivotPosition(), Radians))
+          .angularVelocity(m_angularVelocity.mut_replace(this.getPivotVelocity(), RadiansPerSecond));
+    },
+    this
+  ));
+
+  public double getPivotVoltage() {
+    return pivotMotor1.get() * RobotController.getBatteryVoltage();
+  }
+
   public double getPivotPosition() {
     return absEncoder.getPosition() * 2* Math.PI;
   }
 
-
+  public double getPivotVelocity() {
+    return absEncoder.getVelocity() * 2* Math.PI;
+  }
 
   public void setPivotPower(double power) {
     pivotMotor1.set(power);
