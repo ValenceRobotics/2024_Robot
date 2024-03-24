@@ -30,7 +30,7 @@ public class ChaseNoteCmd extends Command {
     private static final TrapezoidProfile.Constraints O_CONSTRAINTS = AutoConstants.kThetaControllerConstraints;
 
     //to configure
-    private static final Transform3d robotToCam = new Transform3d(new Translation3d(0, 0.0, 0), new Rotation3d(0,0,0));
+    private final Transform3d robotToCam = new Transform3d(new Translation3d(0.0157, -0.3708, 0.4064), new Rotation3d());
 
     private static final ProfiledPIDController xController = new ProfiledPIDController(0.15, 0, 0, X_CONSTRAINTS);
     private static final ProfiledPIDController yController = new ProfiledPIDController(0.15, 0, 0, Y_CONSTRAINTS);
@@ -47,6 +47,9 @@ public class ChaseNoteCmd extends Command {
 
   public ChaseNoteCmd(DriveSubsystem dt, DoubleSupplier xSup, DoubleSupplier ySup, DoubleSupplier rotSup) {
     this.m_dt = dt;
+    this.xSup = xSup;
+    this.ySup = ySup;
+    this.rotSup = rotSup;
 
     xController.setTolerance(0.2);
     yController.setTolerance(0.2);
@@ -63,8 +66,8 @@ public class ChaseNoteCmd extends Command {
   @Override
   public void execute() {
     if (SmartDashboard.getNumber("Notes Detected", 0) > 0) {
-        double xDist = SmartDashboard.getNumberArray("Note 1", doubleArray)[2];
-        double yDist = SmartDashboard.getNumberArray("Note 1", doubleArray)[0];
+        double xDist = SmartDashboard.getNumberArray("Note 1 Position", doubleArray)[2];
+        double yDist = -SmartDashboard.getNumberArray("Note 1 Position", doubleArray)[0];
 
         xDist += robotToCam.getX();
         yDist += robotToCam.getY();
@@ -82,19 +85,21 @@ public class ChaseNoteCmd extends Command {
         // Translation2d newPose = new Translation2d(0,0);
         // double theta = noteTranslation.minus(newPose).getAngle().getDegrees();
 
-        //m_dt.drive(xController.calculate(xDist, 0), yController.calculate(yDist, 0), 0, false, true);
+      m_dt.drive(-xController.calculate(xDist, 0), -yController.calculate(yDist, 0), 0, false, true);
 
-        m_dt.drive(xController.calculate(endDrivePose.getX()-m_dt.getPose().getX(),0), yController.calculate(endDrivePose.getY()-m_dt.getPose().getY(),0), 0, true, true);
+       //m_dt.drive(-xController.calculate(endDrivePose.getX()-m_dt.getPose().getX(),0), -yController.calculate(endDrivePose.getY()-m_dt.getPose().getY(),0), 0, true, true);
 
+       
         // double theta = (Units.degreesToRadians(270+m_dt.getPose().getRotation().getDegrees()));
 
-        // double yAdjust = yController.calculate(yDist);
+        // double yAdjust = -yController.calculate(yDist);
         // double xAdjust = Math.sin(theta) * yAdjust;
         // yAdjust = Math.cos(theta) * yAdjust;
-        // m_dt.drive(controller.calculate)
+        // m_dt.drive(xAdjust, yAdjust, rotSup.getAsDouble(), true, true);
 
         
     } else {
+
         m_dt.drive(
             applyJoystickTransform(xSup.getAsDouble()),
              applyJoystickTransform(ySup.getAsDouble()), 

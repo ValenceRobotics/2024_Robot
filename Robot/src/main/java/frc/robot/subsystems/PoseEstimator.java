@@ -44,7 +44,8 @@ public class PoseEstimator extends SubsystemBase {
         camFront = new PhotonCamera("visionCamFront");
         //camBack = new PhotonCamera("visionCamBack");
         //to configure
-        robotToCamFront = new Transform3d(new Translation3d(0.0089, -0.32, 0.435), new Rotation3d(0,-Units.degreesToRadians(30),0));
+        robotToCamFront = new Transform3d(new Translation3d(0.0089, -0.32, Units.inchesToMeters(11.5)), new Rotation3d(0,-Units.degreesToRadians(30),0));
+        
        // robotToCamBack = new Transform3d(new Translation3d(-0.1113,-0.32,0.435), new Rotation3d(0,Units.degreesToRadians(33),Units.degreesToRadians(180)));
         //numbers reflect current
         //camList = new ArrayList<>();

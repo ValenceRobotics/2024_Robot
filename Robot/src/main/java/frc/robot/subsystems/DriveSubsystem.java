@@ -12,14 +12,17 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
@@ -119,6 +122,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double calcPivotAngle() {
     return 1.12-(0.288*Math.log(this.getDistToTarget()));
+    // double x = this.getDistToTarget();
+    // return (0.001857 * Math.pow(x, 9) - 0.04014 * Math.pow(x, 8) + 0.307788 * Math.pow(x, 7) - 
+    // 0.6034 * Math.pow(x, 6) - 5.03147503 * Math.pow(x, 5) + 40.8601621 * Math.pow(x, 4) - 127.70156 * Math.pow(x, 3) + 
+    // 210.01561 * Math.pow(x, 2) - 176.147701 * Math.pow(x, 1) + 59.196585 * Math.pow(x, 0));
   }
 
   public void setSlowMode(boolean slowMode) {
@@ -150,7 +157,7 @@ public class DriveSubsystem extends SubsystemBase {
             this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     //TO CONFIGURE
-                    new PIDConstants(5, 7, 0.75), // Translation PID constants
+                    new PIDConstants(6, 0, 0), // Translation PID constants
                     new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
     5.7, // Max module speed, in m/s
                     Units.inchesToMeters(18.7383297), // Drive base radius in meters. Distance from robot center to furthest module.
@@ -209,6 +216,7 @@ public class DriveSubsystem extends SubsystemBase {
       m_odometry.addVisionMeasurement(pose3d.toPose2d(), huh.timestampSeconds);
       SmartDashboard.putString("pose from vision front ", pose3d.toPose2d().toString());
     }
+
 
     // if (visionPoseBack.isPresent()) {
     //   var huh2 = visionPoseBack.get();

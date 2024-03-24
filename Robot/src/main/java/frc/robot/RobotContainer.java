@@ -43,6 +43,7 @@ import frc.robot.commands.drive.SwerveDrive;
 import frc.robot.commands.drive.Align.AlignToAmp;
 import frc.robot.commands.drive.Align.AlignToTarget;
 import frc.robot.commands.drive.Align.AlignToTargetAuto;
+import frc.robot.commands.drive.Align.ChaseNoteCmd;
 import frc.robot.commands.drive.Align.DriveToTarget;
 //import frc.robot.subsystems.AprilTagCamera;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -78,6 +79,8 @@ public class RobotContainer {
   //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
     Joystick m_driverController = new Joystick(0);
 
+    CommandXboxController m_xboxDriveController = new CommandXboxController(2);
+
     CommandXboxController m_OperatorController = new CommandXboxController(1);
 
   /**
@@ -93,14 +96,26 @@ public class RobotContainer {
     
     Unmanaged.setPhoenixDiagnosticsStartTime(-1);
     // Configure default commands
+    // m_robotDrive.setDefaultCommand(
+    //         new SwerveDrive(m_robotDrive,
+    //                 () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+    //                         OIConstants.kDriveDeadband),
+    //                 () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+    //                         OIConstants.kDriveDeadband),
+    //                 () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(2),
+    //                         OIConstants.kDriveDeadband)));
+
     m_robotDrive.setDefaultCommand(
             new SwerveDrive(m_robotDrive,
-                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+                    () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
                             OIConstants.kDriveDeadband),
-                    () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+                    () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
                             OIConstants.kDriveDeadband),
-                    () -> -0.75*MathUtil.applyDeadband(m_driverController.getRawAxis(2),
+                    () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(4),
                             OIConstants.kDriveDeadband)));
+
+    
+    
 
     //m_PivotSubsystem.setDefaultCommand(new OpenLoopPivot(m_PivotSubsystem, () -> (-0.3 * m_OperatorController.getRawAxis(1))));
     
@@ -148,13 +163,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("intakeStop", new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition)));
 
     m_autoChooser = AutoBuilder.buildAutoChooser();
-    Shuffleboard.getTab("Autonomous").add("Auto Chooser", m_autoChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    Shuffleboard.getTab("Dashboard").add("Auto Chooser", m_autoChooser);
     SendableChooser<Boolean> debugMode = new SendableChooser<>();
-    // debugMode.addOption("Enabled", true);
-    // debugMode.setDefaultOption("Disabled", false);
+    debugMode.addOption("Enabled", true);
+    debugMode.setDefaultOption("Disabled", false);
     debugMode.onChange(x-> Constants.DebugConstants.kDebugMode = x);
-    Shuffleboard.getTab("Autonomous").add("Debug Mode", debugMode).withWidget(BuiltInWidgets.kToggleSwitch);
-
+    Shuffleboard.getTab("Dashboard").add("Debug Mode", debugMode);
 
 
 
@@ -172,49 +186,75 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, 1)
-        .whileTrue(new SetMechanismState(IntakeState.SHOOTING)).onFalse(new SetMechanismState(IntakeState.STOPPED).andThen(new WaitCommand(0.5).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition))));
-
-    new JoystickButton(m_driverController, 12).onTrue(new InstantCommand(m_robotDrive::resetGyro));
-
-
-    new POVButton(m_driverController, 0).onTrue(new SnapToDirection(m_robotDrive, 0, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
-                            OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
-                            OIConstants.kDriveDeadband)));
-    new POVButton(m_driverController, 90).onTrue(new SnapToDirection(m_robotDrive, 270, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
-                            OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
-                            OIConstants.kDriveDeadband)));
-    new POVButton(m_driverController, 180).onTrue(new SnapToDirection(m_robotDrive, 180, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
-                            OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
-                            OIConstants.kDriveDeadband)));
-    new POVButton(m_driverController, 270).onTrue(new SnapToDirection(m_robotDrive, 90, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
-                            OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
-                            OIConstants.kDriveDeadband)));
+    //new JoystickButton(m_driverController, 1)
+    //    .whileTrue(new SetMechanismState(IntakeState.SHOOTING)).onFalse(new SetMechanismState(IntakeState.STOPPED).andThen(new WaitCommand(0.5).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition))));
+    m_xboxDriveController.rightTrigger().whileTrue(new SetMechanismState(IntakeState.SHOOTING)).onFalse(new SetMechanismState(IntakeState.STOPPED).andThen(new WaitCommand(0.5).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition))));
+    // new JoystickButton(m_driverController, 12).onTrue(new InstantCommand(m_robotDrive::resetGyro));
+    m_xboxDriveController.button(8).onTrue(new InstantCommand(m_robotDrive::resetGyro));
 
 
-    new JoystickButton(m_driverController,2)
-    .whileTrue(new SetSlowMode(m_robotDrive, true))
-    .whileFalse(new SetSlowMode(m_robotDrive, false));
+    // new POVButton(m_driverController, 0).onTrue(new SnapToDirection(m_robotDrive, 0, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+    //                         OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+    //                         OIConstants.kDriveDeadband)));
+    // new POVButton(m_driverController, 90).onTrue(new SnapToDirection(m_robotDrive, 270, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+    //                         OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+    //                         OIConstants.kDriveDeadband)));
+    // new POVButton(m_driverController, 180).onTrue(new SnapToDirection(m_robotDrive, 180, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+    //                         OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+    //                         OIConstants.kDriveDeadband)));
+    // new POVButton(m_driverController, 270).onTrue(new SnapToDirection(m_robotDrive, 90, () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(1),
+    //                         OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
+    //                         OIConstants.kDriveDeadband)));
 
-    new JoystickButton(m_driverController, 5)
-      .whileTrue(new SetClimbLeftPower(m_Climber, 1));
+    m_xboxDriveController.y().onTrue(new SnapToDirection(m_robotDrive, 0, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
+                             OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
+                             OIConstants.kDriveDeadband)));
+
+     m_xboxDriveController.b().onTrue(new SnapToDirection(m_robotDrive, 270, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
+                             OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
+                             OIConstants.kDriveDeadband)));
     
-    new JoystickButton(m_driverController, 9)
-      .whileTrue(new SetClimbLeftPower(m_Climber, -1));
+     m_xboxDriveController.a().onTrue(new SnapToDirection(m_robotDrive, 180, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
+                             OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
+                             OIConstants.kDriveDeadband)));
 
-    new JoystickButton(m_driverController, 6)
-      .whileTrue(new SetClimbRightPower(m_Climber2, 1));
+     m_xboxDriveController.x().onTrue(new SnapToDirection(m_robotDrive, 90, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
+                             OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
+                             OIConstants.kDriveDeadband)));
 
-    new JoystickButton(m_driverController, 10)
-      .whileTrue(new SetClimbRightPower(m_Climber2, -1));
+
+    // new JoystickButton(m_driverController,2)
+    // .whileTrue(new SetSlowMode(m_robotDrive, true))
+    // .whileFalse(new SetSlowMode(m_robotDrive, false));
+
+    m_xboxDriveController.button(9)
+      .whileTrue(new SetSlowMode(m_robotDrive, true))
+      .whileFalse(new SetSlowMode(m_robotDrive, false));
+
+    // new JoystickButton(m_driverController, 5)
+    //   .whileTrue(new SetClimbLeftPower(m_Climber, 1));
+    
+    // new JoystickButton(m_driverController, 9)
+    //   .whileTrue(new SetClimbLeftPower(m_Climber, -1));
+
+    // new JoystickButton(m_driverController, 6)
+    //   .whileTrue(new SetClimbRightPower(m_Climber2, 1));
+
+    // new JoystickButton(m_driverController, 10)
+    //   .whileTrue(new SetClimbRightPower(m_Climber2, -1));
 
     m_OperatorController.rightTrigger().whileTrue(new SetMechanismState(ShooterState.SHOOTING)).onFalse(new SetMechanismState(ShooterState.STOPPED));
     m_OperatorController.leftTrigger().whileTrue(new SetMechanismState(ShooterState.AMP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
 
-    new JoystickButton(m_driverController, 4).whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition)).alongWith(new SetSlowMode(m_robotDrive, true))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).alongWith(new SetSlowMode(m_robotDrive, false))));
+    // new JoystickButton(m_driverController, 4).whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition)))
+    //                 .onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition)));
+    m_xboxDriveController.leftTrigger().whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition)))
+                    .onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition)));
 
     m_OperatorController.leftBumper().whileTrue(new SetMechanismState(IntakeState.OUTTAKING, ShooterState.OUTTAKING)).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED));
-    m_OperatorController.rightBumper().whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition)).alongWith(new SetSlowMode(m_robotDrive, true))).onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).alongWith(new SetSlowMode(m_robotDrive, false))));
+   
+    m_OperatorController.rightBumper().whileTrue(new SetMechanismState(IntakeState.INTAKING, ShooterState.INTAKING).alongWith(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kIntakePosition)))
+                    .onFalse(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED).andThen(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition)));
 
     m_OperatorController.button(8).whileTrue(Commands.run(() -> m_PivotSubsystem.setGoal((2*Math.PI/3)*Math.abs(m_OperatorController.getRawAxis(1)))));
     
@@ -238,7 +278,7 @@ public class RobotContainer {
 
 
     // m_OperatorController.a().whileTrue(AlignToAmp.pathfindingCommand);
-      new JoystickButton(m_driverController, 8).whileTrue(new AlignToAmp(m_robotDrive));
+      // new JoystickButton(m_driverController, 8).whileTrue(new AlignToAmp(m_robotDrive));
 
     // SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
     // m_OperatorController.y().onTrue(new SetPivotPosition(m_PivotSubsystem, ()->SmartDashboard.getNumber("test pivot loc", PivotConstants.kHomePosition)));

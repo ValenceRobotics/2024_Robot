@@ -22,6 +22,7 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -36,6 +37,9 @@ public class PivotSubsystem extends SubsystemBase {
     private final ArmFeedforward pivotFeedforward;
     private final AbsoluteEncoder absEncoder;
     private final double pivotVelocity;
+    private final double pivotP = 0;
+    private final double pivotI = 0;
+    private final double pivotD = 0;
     private final PIDController pivotPIDController = new PIDController(.1, 0.0005, 0); //0.12, 0.0005, 0.0002
     private double goal = PivotConstants.kHomePosition;
     private double gravConst = 0.05;
@@ -58,11 +62,20 @@ public class PivotSubsystem extends SubsystemBase {
     absEncoder = pivotMotor2.getAbsoluteEncoder(Type.kDutyCycle);
     pivotPIDController.enableContinuousInput(0, 2*Math.PI);
     pivotPIDController.setTolerance(Units.degreesToRadians(1));
+    // SmartDashboard.putNumber("Pivot P", pivotP);
+    // SmartDashboard.putNumber("Pivot I", pivotI);
+    // SmartDashboard.putNumber("Pivot D", pivotD);
+    // pivotPIDController.setP(SmartDashboard.getNumber("Pivot P", 0));
+    // pivotPIDController.setI(SmartDashboard.getNumber("Pivot I", 0));
+    // pivotPIDController.setD(SmartDashboard.getNumber("Pivot D", 0));
+
     // Shuffleboard.getTab("Pivot").add("pid test", pivotPIDController);
 
     //absEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
     //absEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
     //absEncoder.setPositionOffset(PivotConstants.positionOffset);
+
+
     pivotVelocity = 0.5;
 
   }
@@ -177,13 +190,15 @@ public class PivotSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Pivot/atsetpoint", pivotPIDController.atSetpoint());
     SmartDashboard.putNumber("Pivot/p", pivotPIDController.getP());
     SmartDashboard.putNumber("Pivot/d", pivotPIDController.getD());
+    SmartDashboard.putNumber("Pivot/i", pivotPIDController.getI());
+
 
     }
 
     pivotPIDController.setI(0);
 
     if(this.getGoal() == PivotConstants.kHomePosition) {
-        pivotPIDController.setP(0.1 + (this.getGoal() > this.getPivotPosition() ? 0.2 : 0));
+        pivotPIDController.setP(0.1 + (this.getGoal() > this.getPivotPosition() ? 0.3 : 0));
         pivotPIDController.setD(0);
     }
 
@@ -201,7 +216,7 @@ public class PivotSubsystem extends SubsystemBase {
         pivotPIDController.setP(0.2);
       // pivotPIDController.setI(0.001);
 
-      pivotPIDController.setI(0.02);
+      pivotPIDController.setI(0.05);
             pivotPIDController.setD(0.25);
 
     }
@@ -210,11 +225,11 @@ public class PivotSubsystem extends SubsystemBase {
     if(this.getGoal() == PivotConstants.kIntakePosition){
       gravConst = 0;
 
-     pivotPIDController.setP(0.4);
-      // pivotPIDController.setI(0.001);
+    //  pivotPIDController.setP(0.4)
+    //   // pivotPIDController.setI(0.001);
 
-      pivotPIDController.setI(0.0);
-      pivotPIDController.setD(0.0);
+    //   pivotPIDController.setI(0.0);
+    //   pivotPIDController.setD(0.0);
 
         setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
 
