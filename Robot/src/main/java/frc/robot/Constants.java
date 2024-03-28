@@ -13,7 +13,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 
 
 
@@ -55,7 +54,6 @@ public final class Constants {
     public static final int shooterMotorbottomId = 26;
     public static final double shooterPower = 0.3;
     public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
-    public static final CurrentLimitsConfigs CURRENT_LIMIT = new CurrentLimitsConfigs().withStatorCurrentLimit(80);
     public static final int vortexRPM = 6784;
    }
 

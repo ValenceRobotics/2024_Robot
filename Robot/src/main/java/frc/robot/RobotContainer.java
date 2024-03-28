@@ -34,8 +34,8 @@ import frc.robot.Constants.IntakeState;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.ShooterState;
+import frc.robot.commands.AutoShoot;
 import frc.robot.commands.SetPivotPosition;
-import frc.robot.commands.ShootByDistance;
 import frc.robot.commands.Climb.SetClimbLeftPower;
 import frc.robot.commands.Climb.SetClimbRightPower;
 import frc.robot.commands.Manipulator.SetMechanismState;
@@ -94,8 +94,8 @@ public class RobotContainer {
 
     //CameraServer.startAutomaticCapture();
 
-    //DataLogManager.stop();
-    DataLogManager.start();
+    DataLogManager.stop();
+    //DataLogManager.start();
     
     Unmanaged.setPhoenixDiagnosticsStartTime(-1);
     // Configure default commands
@@ -115,13 +115,7 @@ public class RobotContainer {
                     () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
                             OIConstants.kDriveDeadband),
                     () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(4),
-                            OIConstants.kDriveDeadband)));
-
-    
-    
-
-    //m_PivotSubsystem.setDefaultCommand(new OpenLoopPivot(m_PivotSubsystem, () -> (-0.3 * m_OperatorController.getRawAxis(1))));
-    
+                            OIConstants.kDriveDeadband)));    
   
     //Register Named Commands 
     NamedCommands.registerCommand("shootUpClose", (new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot).withTimeout(0.01) )
@@ -292,7 +286,7 @@ public class RobotContainer {
 
     m_OperatorController.x().whileTrue(((Commands.run(() -> m_PivotSubsystem.setGoal(m_robotDrive.calcPivotAngle()))).alongWith((new AlignToTarget(m_robotDrive, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
                             OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
-                            OIConstants.kDriveDeadband))))));
+                            OIConstants.kDriveDeadband))))).alongWith(new AutoShoot(m_Shooter, m_IntakeFeederSubsystem))).onFalse(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).alongWith(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED)));
 
                             
 
@@ -303,9 +297,9 @@ public class RobotContainer {
 
     // // SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
     // // m_OperatorController.y().onTrue(new SetPivotPosition(m_PivotSubsystem, ()->SmartDashboard.getNumber("test pivot loc", PivotConstants.kHomePosition)));
-    m_OperatorController.y().whileTrue(new AlignToTarget(m_robotDrive, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
-                            OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
-                            OIConstants.kDriveDeadband)));
+    // m_OperatorController.y().whileTrue(new AlignToTarget(m_robotDrive, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
+    //                         OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
+    //                         OIConstants.kDriveDeadband)));
     // test vision/rotation
     // test pivot down on intake
     // check dashboard/debugmode
