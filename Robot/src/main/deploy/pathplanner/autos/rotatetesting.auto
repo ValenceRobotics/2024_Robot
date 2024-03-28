@@ -2,30 +2,24 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.74,
-      "y": 4.41
+      "x": 2.67,
+      "y": 5.82
     },
-    "rotation": 121.18421712449268
+    "rotation": -178.13208544206606
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "shootUpClose"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_1"
+            "pathName": "rotate"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "TestingAutos",
   "choreoAuto": false
 }

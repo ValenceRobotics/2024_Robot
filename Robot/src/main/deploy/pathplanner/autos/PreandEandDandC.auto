@@ -2,25 +2,31 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6737393569573865,
-      "y": 4.318634608833198
+      "x": 0.73,
+      "y": 4.412
     },
-    "rotation": 121.05427111635277
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "BLUESIDEPATH_3"
+            "name": "giveBackshot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Distance Shot BLUESIDEPATH_4"
+            "pathName": "PreandEandD 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreandEandD 2"
           }
         },
         {
@@ -32,13 +38,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_5"
+            "pathName": "PreandEandD 3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_6"
+            "pathName": "UnderStageShootD"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootDistance"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "UnderStageIntakeC"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "UnderStageShootC"
           }
         },
         {
@@ -50,6 +74,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "CenterLineOnly",
   "choreoAuto": false
 }

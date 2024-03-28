@@ -16,7 +16,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.MutableMeasure.mutable;
 
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -24,7 +28,13 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -37,31 +47,45 @@ public class PivotSubsystem extends SubsystemBase {
     private final ArmFeedforward pivotFeedforward;
     private final AbsoluteEncoder absEncoder;
     private final double pivotVelocity;
-    private final double pivotP = 0;
-    private final double pivotI = 0;
-    private final double pivotD = 0;
-    private final PIDController pivotPIDController = new PIDController(.1, 0.0005, 0); //0.12, 0.0005, 0.0002
+    private final PIDController pivotPIDController = new PIDController(.3, 0,0); //0.6, 0.0015, 0.002
     private double goal = PivotConstants.kHomePosition;
-    private double gravConst = 0.05;
+    private double gravConst = 0.026;
     //abs encoder
     //possible feedforward?
 
+    private final MutableMeasure<Voltage> m_appliedVoltage = mutable(Volts.of(0));
+    private final MutableMeasure<Angle> m_angularPosition = mutable(Radians.of(0));
+    private final MutableMeasure<Velocity<Angle>> m_angularVelocity = mutable(RadiansPerSecond.of(0));
+
   private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
-    new SysIdRoutine.Config(),
-    new SysIdRoutine.Mechanism(
-    (voltage) -> this.setPivotVolts(voltage.in(Volts)),
-    null, // No log consumer, since data is recorded by URCL
-    this
-  ));
+      new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(2.5), Second.of(10)),
+      new SysIdRoutine.Mechanism(
+      (Measure<Voltage> volts) -> {
+        this.setPivotPower(volts.in(Volts)/RobotController.getBatteryVoltage());
+      },
+      log -> {
+        log.motor("pivotMotors")
+          .voltage(
+            m_appliedVoltage.mut_replace(this.getPivotVoltage(), Volts))
+            .angularPosition(m_angularPosition.mut_replace(this.getPivotPosition(), Radians))
+            .angularVelocity(m_angularVelocity.mut_replace(this.getPivotVelocity(), RadiansPerSecond));
+      },
+      this
+    ));
 
   public PivotSubsystem() {
     pivotMotor1 = createPivotController(PivotConstants.pivotMotor1Id, false);
-    pivotMotor2 = createPivotController(PivotConstants.pivotMotor2Id, false);
-    pivotController = new ProfiledPIDController(0, 0, 0, PivotConstants.kPivotControllerConstraints);
+    pivotMotor2 = createPivotController(PivotConstants.pivotMotor2Id, true);
+
+    pivotController = new ProfiledPIDController(0.5, 0, 0, PivotConstants.kPivotControllerConstraints);
     pivotFeedforward = new ArmFeedforward(0, 0, 0);
     absEncoder = pivotMotor2.getAbsoluteEncoder(Type.kDutyCycle);
+    absEncoder.setInverted(true);
     pivotPIDController.enableContinuousInput(0, 2*Math.PI);
     pivotPIDController.setTolerance(Units.degreesToRadians(1));
+    SmartDashboard.putNumber("Pivot/grav const", this.gravConst);
+
+    SmartDashboard.putData("Pivot/PID", pivotPIDController);
     // SmartDashboard.putNumber("Pivot P", pivotP);
     // SmartDashboard.putNumber("Pivot I", pivotI);
     // SmartDashboard.putNumber("Pivot D", pivotD);
@@ -94,11 +118,19 @@ public class PivotSubsystem extends SubsystemBase {
     return absEncoder.getPosition() * 2* Math.PI;
   }
 
+  public double getPivotVoltage() {
+    return pivotMotor1.get() * RobotController.getBatteryVoltage();
+  }
+
+  public double getPivotVelocity() {
+    return absEncoder.getVelocity() * 2* Math.PI;
+  }
+
 
 
   public void setPivotPower(double power) {
     pivotMotor1.set(power);
-    pivotMotor2.set(-power);
+    pivotMotor2.set(power);
   }
 
   public void setPivotVolts(double voltage) {
@@ -131,6 +163,7 @@ public class PivotSubsystem extends SubsystemBase {
   private CANSparkMax createPivotController(int port, boolean isInverted) {
     CANSparkMax controller = new CANSparkMax(port, MotorType.kBrushless);
     controller.restoreFactoryDefaults();
+    
 
     controller.setIdleMode(CANSparkMax.IdleMode.kBrake);
     controller.setSmartCurrentLimit(40);
@@ -182,7 +215,6 @@ public class PivotSubsystem extends SubsystemBase {
     if (DebugConstants.kDebugMode) {
     SmartDashboard.putNumber("Pivot/Position", getPivotPosition());
     SmartDashboard.putNumber("Pivot/Test", 39585);
-    SmartDashboard.putNumber("Pivot/Goal", this.goal);
 
     SmartDashboard.putNumber("Pivot/Current 1", pivotMotor1.getOutputCurrent());
     SmartDashboard.putNumber("Pivot/Current 2", pivotMotor2.getOutputCurrent());
@@ -191,70 +223,21 @@ public class PivotSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pivot/p", pivotPIDController.getP());
     SmartDashboard.putNumber("Pivot/d", pivotPIDController.getD());
     SmartDashboard.putNumber("Pivot/i", pivotPIDController.getI());
+    SmartDashboard.putNumber("Pivot/Goal", this.goal);
 
 
-    }
-
-    pivotPIDController.setI(0);
-
-    if(this.getGoal() == PivotConstants.kHomePosition) {
-        pivotPIDController.setP(0.1 + (this.getGoal() > this.getPivotPosition() ? 0.3 : 0));
-        pivotPIDController.setD(0);
-    }
-
-   else if (this.getGoal() == PivotConstants.kAmpPosition || this.getGoal() == PivotConstants.kBackshotPosition ) {
-      pivotPIDController.setP(0.11);
-      pivotPIDController.setI(0.001);
-
-      pivotPIDController.setD(0);
-    } else if (this.getGoal() == PivotConstants.kSubwooferShot || this.getGoal() == PivotConstants.kSubwooferSideShot) {
-      pivotPIDController.setP(0.15);
-      pivotPIDController.setI(0.001);
-
-      pivotPIDController.setD(0);
-    } else{
-        pivotPIDController.setP(0.2);
-      // pivotPIDController.setI(0.001);
-
-      pivotPIDController.setI(0.05);
-            pivotPIDController.setD(0.25);
 
     }
 
-
-    if(this.getGoal() == PivotConstants.kIntakePosition){
+    if (this.goal == PivotConstants.kIntakePosition) {
       gravConst = 0;
-
-    //  pivotPIDController.setP(0.4)
-    //   // pivotPIDController.setI(0.001);
-
-    //   pivotPIDController.setI(0.0);
-    //   pivotPIDController.setD(0.0);
-
-        setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
-
+    } else {
+      gravConst = 0.026;
     }
 
-    else if (getPivotPosition()>1.9) {
-      gravConst = 0.12; // old 0.15
-        setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
-
+    setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(this.gravConst*Math.cos(getPivotPosition()-0.1)));
   
-  
-     } else {
-      gravConst = 0.05;
-
-      
-
-      setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(gravConst*Math.cos(getPivotPosition()-0.1)));
-  
-     };
-
-
-    //SmartDashboard.putData(shooterPower);
-    // This method will be called once per scheduler run
   }
-
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation

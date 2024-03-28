@@ -1,0 +1,79 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.34,
+      "y": 5.572
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "giveBackshot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterSubToMidNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MidNoteToCenterSub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "giveBackshot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterSubToRightNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightNoteToCenterSub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "giveBackshot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterSubToLeftNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftNoteToCenterSub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "giveBackshot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Sub4CloseCombos",
+  "choreoAuto": false
+}

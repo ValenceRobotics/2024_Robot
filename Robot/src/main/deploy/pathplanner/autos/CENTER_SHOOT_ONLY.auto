@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3160154641111295,
-      "y": 5.462576940191475
+      "x": 1.34,
+      "y": 5.57
     },
-    "rotation": -178.4306451952511
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -14,12 +14,12 @@
         {
           "type": "named",
           "data": {
-            "name": "shootUpClose"
+            "name": "giveBackshot"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "SimpleAutos",
   "choreoAuto": false
 }

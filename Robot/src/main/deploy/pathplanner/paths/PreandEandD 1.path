@@ -1,0 +1,103 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.732099284103781,
+        "y": 4.406174499552789
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.6269515003484982,
+        "y": 3.3362425018688895
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.159572508718478,
+        "y": 1.4006382515134692
+      },
+      "prevControl": {
+        "x": 4.825966076374532,
+        "y": 1.9899062099910267
+      },
+      "nextControl": {
+        "x": 7.414310942365962,
+        "y": 0.8462189436227204
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.484242940049862,
+        "y": 0.7489523983787291
+      },
+      "prevControl": {
+        "x": 7.43376425141476,
+        "y": 0.7878590164763261
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "startIntakeE",
+      "waypointRelativePos": 1.6,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intakeStart"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "stopIntakeE",
+      "waypointRelativePos": 2.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intakeStop"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.7,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "PREandEandD",
+  "previewStartingState": {
+    "rotation": -60.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

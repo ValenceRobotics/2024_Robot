@@ -5,13 +5,19 @@
   "pathFolders": [
     "BLUESIDEPATH",
     "Center4.5Note",
-    "CenterLine"
+    "Center4Backshot",
+    "PREandEandDandC",
+    "PREandEandD"
   ],
   "autoFolders": [
-    "New Folder"
+    "CenterLineOnly",
+    "CloseAndCenterLine",
+    "SimpleAutos",
+    "Sub4CloseCombos",
+    "TestingAutos"
   ],
-  "defaultMaxVel": 3.0,
-  "defaultMaxAccel": 3.0,
+  "defaultMaxVel": 5.7,
+  "defaultMaxAccel": 5.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "maxModuleSpeed": 5.7

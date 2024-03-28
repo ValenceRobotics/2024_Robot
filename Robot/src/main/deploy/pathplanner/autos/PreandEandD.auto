@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6576257764044353,
-      "y": 6.74849429899361
+      "x": 0.73,
+      "y": 4.41
     },
-    "rotation": -120.65066795705285
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
@@ -14,48 +14,48 @@
         {
           "type": "named",
           "data": {
-            "name": "shootUpClose"
+            "name": "giveBackshot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SIDESHOOT_2_Start"
+            "pathName": "PreandEandD 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SIDESHOOT_2_FINISH"
+            "pathName": "PreandEandD 2"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootUpClose"
+            "name": "shootDistance"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SIDESHOOT_3_Start"
+            "pathName": "PreandEandD 3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SIDESHOOT_3_FINISH"
+            "pathName": "PreandEandD 4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootUpClose"
+            "name": "shootDistance"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "CenterLineOnly",
   "choreoAuto": false
 }

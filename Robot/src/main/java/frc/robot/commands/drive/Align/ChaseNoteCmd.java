@@ -20,7 +20,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.IntakeState;
+import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.ShooterState;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeFeederSubsystem;
+import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 
 public class ChaseNoteCmd extends Command {
@@ -32,21 +38,27 @@ public class ChaseNoteCmd extends Command {
     //to configure
     private final Transform3d robotToCam = new Transform3d(new Translation3d(0.0157, -0.3708, 0.4064), new Rotation3d());
 
-    private static final ProfiledPIDController xController = new ProfiledPIDController(0.15, 0, 0, X_CONSTRAINTS);
-    private static final ProfiledPIDController yController = new ProfiledPIDController(0.15, 0, 0, Y_CONSTRAINTS);
+    private static final ProfiledPIDController xController = new ProfiledPIDController(1, 0, 0, X_CONSTRAINTS);
+    private static final ProfiledPIDController yController = new ProfiledPIDController(1, 0, 0, Y_CONSTRAINTS);
     private static final ProfiledPIDController oController = new ProfiledPIDController(0.02, 0, 0.001, O_CONSTRAINTS);
     private double[] doubleArray = new double[0];
 
 
     private final DriveSubsystem m_dt;
+    private final IntakeFeederSubsystem m_intakeFeeder;
+    private final ShooterSubsystem m_shooter;
+    private final PivotSubsystem m_pivot;
     private DoubleSupplier ySup;
     private DoubleSupplier xSup;
     private DoubleSupplier rotSup;
     private Transform2d noteTransform;
 
 
-  public ChaseNoteCmd(DriveSubsystem dt, DoubleSupplier xSup, DoubleSupplier ySup, DoubleSupplier rotSup) {
+  public ChaseNoteCmd(DriveSubsystem dt, IntakeFeederSubsystem intake, ShooterSubsystem shooter, PivotSubsystem pivot, DoubleSupplier xSup, DoubleSupplier ySup, DoubleSupplier rotSup) {
     this.m_dt = dt;
+    this.m_intakeFeeder = intake;
+    this.m_pivot = pivot;
+    this.m_shooter = shooter;
     this.xSup = xSup;
     this.ySup = ySup;
     this.rotSup = rotSup;
@@ -54,7 +66,7 @@ public class ChaseNoteCmd extends Command {
     xController.setTolerance(0.2);
     yController.setTolerance(0.2);
     oController.setTolerance(Units.degreesToRadians(3));
-    addRequirements(m_dt);
+    addRequirements(m_dt, m_pivot, m_intakeFeeder, m_shooter);
   }
 
   @Override
@@ -68,6 +80,16 @@ public class ChaseNoteCmd extends Command {
     if (SmartDashboard.getNumber("Notes Detected", 0) > 0) {
         double xDist = SmartDashboard.getNumberArray("Note 1 Position", doubleArray)[2];
         double yDist = -SmartDashboard.getNumberArray("Note 1 Position", doubleArray)[0];
+
+        if (xDist <= 2) {
+          m_pivot.setGoal(PivotConstants.kIntakePosition);
+          m_intakeFeeder.setIntakeState(IntakeState.INTAKING);
+          m_shooter.setShooterState(ShooterState.INTAKING);
+        } else {
+          m_pivot.setGoal(PivotConstants.kHomePosition);
+          m_intakeFeeder.setIntakeState(IntakeState.STOPPED);
+          m_shooter.setShooterState(ShooterState.STOPPED);
+        }
 
         xDist += robotToCam.getX();
         yDist += robotToCam.getY();
@@ -85,7 +107,7 @@ public class ChaseNoteCmd extends Command {
         // Translation2d newPose = new Translation2d(0,0);
         // double theta = noteTranslation.minus(newPose).getAngle().getDegrees();
 
-      m_dt.drive(-xController.calculate(xDist, 0), -yController.calculate(yDist, 0), 0, false, true);
+      m_dt.drive(-xController.calculate(xDist+0.3, 0), -yController.calculate(yDist, 0), 0, false, true);
 
        //m_dt.drive(-xController.calculate(endDrivePose.getX()-m_dt.getPose().getX(),0), -yController.calculate(endDrivePose.getY()-m_dt.getPose().getY(),0), 0, true, true);
 

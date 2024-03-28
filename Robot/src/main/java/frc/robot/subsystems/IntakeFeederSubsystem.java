@@ -24,8 +24,8 @@ public class IntakeFeederSubsystem extends SubsystemBase {
 
 
   public IntakeFeederSubsystem() {
-    intakeMotor = createIntakeFeederController(IntakeFeederConstants.intakeMotorId, false);
-    feederMotor1 = createIntakeFeederController(IntakeFeederConstants.feederMotor1Id, false);
+    intakeMotor = createIntakeFeederController(IntakeFeederConstants.intakeMotorId, false, 40);
+    feederMotor1 = createIntakeFeederController(IntakeFeederConstants.feederMotor1Id, false, 30);
 
   }
 
@@ -59,11 +59,12 @@ public class IntakeFeederSubsystem extends SubsystemBase {
   }
 
 
-  private CANSparkMax createIntakeFeederController(int port, boolean isInverted) {
+  private CANSparkMax createIntakeFeederController(int port, boolean isInverted, int currentLimit) {
     CANSparkMax controller = new CANSparkMax(port, MotorType.kBrushless);
     controller.restoreFactoryDefaults();
 
     controller.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    controller.setSmartCurrentLimit(currentLimit);
     
 
     controller.setInverted(isInverted);

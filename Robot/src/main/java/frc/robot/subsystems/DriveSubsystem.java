@@ -121,7 +121,8 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double calcPivotAngle() {
-    return 1.12-(0.288*Math.log(this.getDistToTarget()));
+    double x = this.getDistToTarget();
+    return (-8.63e-4*Math.pow(x, 4) + 3.01e-3*Math.pow(x,3) + 0.052*Math.pow(x,2) -0.388*x + 1.51);
     // double x = this.getDistToTarget();
     // return (0.001857 * Math.pow(x, 9) - 0.04014 * Math.pow(x, 8) + 0.307788 * Math.pow(x, 7) - 
     // 0.6034 * Math.pow(x, 6) - 5.03147503 * Math.pow(x, 5) + 40.8601621 * Math.pow(x, 4) - 127.70156 * Math.pow(x, 3) + 
@@ -157,7 +158,7 @@ public class DriveSubsystem extends SubsystemBase {
             this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     //TO CONFIGURE
-                    new PIDConstants(6, 0, 0), // Translation PID constants
+                    new PIDConstants(8, 0, 0), // Translation PID constants
                     new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
     5.7, // Max module speed, in m/s
                     Units.inchesToMeters(18.7383297), // Drive base radius in meters. Distance from robot center to furthest module.
@@ -215,6 +216,36 @@ public class DriveSubsystem extends SubsystemBase {
       Pose3d pose3d = huh.estimatedPose;
       m_odometry.addVisionMeasurement(pose3d.toPose2d(), huh.timestampSeconds);
       SmartDashboard.putString("pose from vision front ", pose3d.toPose2d().toString());
+    }
+
+    if (SmartDashboard.getNumber("Tags Detected",0) > 0) {
+      Transform3d robotToCam = new Transform3d(new Translation3d(0.0157, -0.3708, 0.4064), new Rotation3d());
+
+      double poseX = SmartDashboard.getNumber("vision_x",0);
+      double poseY = SmartDashboard.getNumber("vision_y",0);
+      double poseZ = SmartDashboard.getNumber("vision_z",0);
+      double posePitch = SmartDashboard.getNumber("vision_pitch",0);
+      double poseRoll = SmartDashboard.getNumber("vision_Roll",0);
+      double poseYaw = SmartDashboard.getNumber("vision_yaw",0);
+      poseYaw -= Units.degreesToRadians(270);
+
+      double xOffset = -0.0157;
+      double yOffset = 0.3708;
+      double zOffset = -0.4064;
+
+      double robotX = poseX+(xOffset*Math.cos(poseYaw)-yOffset*Math.sin(poseYaw));
+      double robotY = poseY+(xOffset*Math.sin(poseYaw)+yOffset*Math.cos(poseYaw));
+      double robotZ = poseZ+zOffset;
+
+      Pose3d oakPose = new Pose3d(poseX, poseY, poseZ, new Rotation3d(poseRoll, posePitch, poseYaw));
+
+      //oakPose = oakPose.plus(robotToCam.inverse());
+
+
+      SmartDashboard.putString("Oak pose",  oakPose.toPose2d().toString());
+
+    }else{
+      SmartDashboard.putString("Oak pose", (new Pose2d()).toString());
     }
 
 
@@ -321,7 +352,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
 
-    m_gyro.setYaw(180 + pose.getRotation().getDegrees() );
+   // m_gyro.setYaw(180 + pose.getRotation().getDegrees() );
 
     m_odometry.resetPosition(
       m_gyro.getRotation2d(),

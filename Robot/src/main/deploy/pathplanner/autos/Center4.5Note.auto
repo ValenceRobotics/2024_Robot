@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3740584827141216,
-      "y": 5.524739769858686
+      "x": 1.3448785191409243,
+      "y": 5.495559806285489
     },
-    "rotation": 1.2188752351312606
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -54,6 +54,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "Center4Note_4.5"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "shootDistance"
@@ -68,6 +74,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "CloseAndCenterLine",
   "choreoAuto": false
 }

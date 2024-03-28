@@ -78,11 +78,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotortop.set(toppower);
     shooterMotorbottom.set(bottompower);
 
-    if (DebugConstants.kDebugMode) {
 
-    SmartDashboard.putNumber("shooter motor 1", shooterMotortop.getAppliedOutput());
-    SmartDashboard.putNumber("shooter motor 2", shooterMotortop.getAppliedOutput());
-    }
 
   }
 
@@ -102,19 +98,21 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setShooterVelocity(double velocity) {
     double feedVelocity = shooterFeedforward.calculate(velocity);
-    double pidVelocity1 = shooterPid.calculate(getTopVelocityRPM(), velocity);
-    double pidVelocity2 = shooterPid.calculate(getBottomVelocityRPM(), velocity);
+    double pidVelocity1 = shooterPid.calculate(getTopVelocity(), velocity);
+    double pidVelocity2 = shooterPid.calculate(getBottomVelocity(), velocity);
     shooterMotortop.setVoltage(feedVelocity + pidVelocity1);
     shooterMotorbottom.setVoltage(feedVelocity + pidVelocity2);
   }
 
-  public double getTopVelocityRPM() {
-    return shooterMotortop.get() * ShooterConstants.vortexRPM;
+  public double getTopVelocity() {
+    return shooterMotortop.getEncoder().getVelocity();
   }
 
-  public double getBottomVelocityRPM() {
-    return shooterMotorbottom.get() * ShooterConstants.vortexRPM;
+  public double getBottomVelocity() {
+    return shooterMotorbottom.getEncoder().getVelocity();
   }
+
+
 
 
   private CANSparkFlex createShooterController(int port, boolean isInverted) {
@@ -176,6 +174,13 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
       shooterMotorbottom.set(currentState.lowSpeed);
       shooterMotortop.set(currentState.highSpeed);
+
+
+   if (DebugConstants.kDebugMode) {
+
+    SmartDashboard.putNumber("shooter motor 1", this.getTopVelocity());
+    SmartDashboard.putNumber("shooter motor 2", this.getBottomVelocity());
+    }
   }
 
   @Override
