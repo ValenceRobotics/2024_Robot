@@ -21,6 +21,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 // public class AlignToAmp {
 //         // Load the path we want to pathfind to and follow
@@ -96,16 +98,21 @@ public class AlignToAmp extends Command {
   @Override
   public void execute() {
 
-        double xDist = Math.abs(target.getX()-m_dt.getPose().getX());
-        double yDist = Math.abs(target.getY()-m_dt.getPose().getY());
+        double xDist = target.getX()-m_dt.getPose().getX();
+        double yDist = target.getY()-m_dt.getPose().getY();
 
-        if (!isRed) {
+        SmartDashboard.putString("Amp align/ target", target.toString());
+
+        if (isRed) {
         xDist *= -1;
-        } else {
         yDist *= -1;
         }
 
-        m_dt.drive(xController.calculate(xDist, 0), yController.calculate(yDist, 0), oController.calculate(m_dt.getPose().getRotation().getDegrees(), 90), true, true);
+
+        SmartDashboard.putNumber("Amp align/ xDist", xDist);
+        SmartDashboard.putNumber("Amp align/ yDist", xDist);
+
+        m_dt.drive(xController.calculate(xDist, 0), yController.calculate(yDist, 0), oController.calculate(m_dt.getPose().getRotation().getDegrees(), 270), true, true);
 
   }
 

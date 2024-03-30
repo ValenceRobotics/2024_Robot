@@ -81,7 +81,7 @@ public class ChaseNoteCmd extends Command {
         double xDist = SmartDashboard.getNumberArray("Note 1 Position", doubleArray)[2];
         double yDist = -SmartDashboard.getNumberArray("Note 1 Position", doubleArray)[0];
 
-        if (xDist <= 2) {
+        if (xDist >= 2) {
           m_pivot.setGoal(PivotConstants.kIntakePosition);
           m_intakeFeeder.setIntakeState(IntakeState.INTAKING);
           m_shooter.setShooterState(ShooterState.INTAKING);

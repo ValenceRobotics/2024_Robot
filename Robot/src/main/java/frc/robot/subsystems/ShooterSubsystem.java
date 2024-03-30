@@ -119,7 +119,7 @@ public class ShooterSubsystem extends SubsystemBase {
     CANSparkFlex controller = new CANSparkFlex(port, MotorType.kBrushless);
     controller.restoreFactoryDefaults();
 
-    controller.setIdleMode(CANSparkFlex.IdleMode.kBrake);
+    controller.setIdleMode(CANSparkFlex.IdleMode.kCoast);
     controller.setSmartCurrentLimit(40);
     controller.setClosedLoopRampRate(0.0);
     controller.setOpenLoopRampRate(0.0);

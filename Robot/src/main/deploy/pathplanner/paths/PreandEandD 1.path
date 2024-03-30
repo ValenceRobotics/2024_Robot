@@ -16,40 +16,30 @@
     },
     {
       "anchor": {
-        "x": 6.159572508718478,
-        "y": 1.4006382515134692
+        "x": 8.314026485872878,
+        "y": 0.31125294478076887
       },
       "prevControl": {
-        "x": 4.825966076374532,
-        "y": 1.9899062099910267
-      },
-      "nextControl": {
-        "x": 7.414310942365962,
-        "y": 0.8462189436227204
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 8.484242940049862,
-        "y": 0.7489523983787291
-      },
-      "prevControl": {
-        "x": 7.43376425141476,
-        "y": 0.7878590164763261
+        "x": 3.732772204880904,
+        "y": 0.2723463266831731
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.55,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "startIntakeE",
-      "waypointRelativePos": 1.6,
+      "waypointRelativePos": 0.8,
       "command": {
         "type": "parallel",
         "data": {
@@ -58,23 +48,6 @@
               "type": "named",
               "data": {
                 "name": "intakeStart"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "stopIntakeE",
-      "waypointRelativePos": 2.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "intakeStop"
               }
             }
           ]

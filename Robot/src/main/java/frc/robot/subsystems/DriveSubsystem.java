@@ -122,7 +122,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double calcPivotAngle() {
     double x = this.getDistToTarget();
-    return (-8.63e-4*Math.pow(x, 4) + 3.01e-3*Math.pow(x,3) + 0.052*Math.pow(x,2) -0.388*x + 1.51);
+    return (-8.63e-4*Math.pow(x, 4) + 3.01e-3*Math.pow(x,3) + 0.052*Math.pow(x,2) -0.388*x + 1.59);
     // double x = this.getDistToTarget();
     // return (0.001857 * Math.pow(x, 9) - 0.04014 * Math.pow(x, 8) + 0.307788 * Math.pow(x, 7) - 
     // 0.6034 * Math.pow(x, 6) - 5.03147503 * Math.pow(x, 5) + 40.8601621 * Math.pow(x, 4) - 127.70156 * Math.pow(x, 3) + 
@@ -158,7 +158,7 @@ public class DriveSubsystem extends SubsystemBase {
             this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     //TO CONFIGURE
-                    new PIDConstants(8, 0, 0), // Translation PID constants
+                    new PIDConstants(8, 0, 0), // Translation PID constants Neoprene: 8, 0, 0
                     new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
     5.7, // Max module speed, in m/s
                     Units.inchesToMeters(18.7383297), // Drive base radius in meters. Distance from robot center to furthest module.
