@@ -117,6 +117,10 @@ public class RobotContainer {
                     () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(4),
                             OIConstants.kDriveDeadband)));    
   
+
+    m_Climber.setDefaultCommand(new SetClimbLeftPower(m_Climber, () -> MathUtil.applyDeadband(m_OperatorController.getRawAxis(5), OIConstants.kDriveDeadband)));
+    m_Climber2.setDefaultCommand(new SetClimbRightPower(m_Climber2, () -> MathUtil.applyDeadband(m_OperatorController.getRawAxis(1), OIConstants.kDriveDeadband)));
+
     //Register Named Commands 
     NamedCommands.registerCommand("shootUpClose", (new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot).withTimeout(0.01) )
                                              .andThen(new SetMechanismState( ShooterState.SHOOTING))
@@ -322,7 +326,6 @@ public class RobotContainer {
     m_OperatorController.povLeft().onTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kPodiumPosition));
 
    
-
 
 
 

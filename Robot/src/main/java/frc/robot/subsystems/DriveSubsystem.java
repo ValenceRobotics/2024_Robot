@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -214,7 +215,7 @@ public class DriveSubsystem extends SubsystemBase {
     if(visionPoseFront.isPresent()) {
       var huh = visionPoseFront.get();
       Pose3d pose3d = huh.estimatedPose;
-      m_odometry.addVisionMeasurement(pose3d.toPose2d(), huh.timestampSeconds);
+      m_odometry.addVisionMeasurement(pose3d.toPose2d(), huh.timestampSeconds, VecBuilder.fill(RobotContainer.m_PoseEstimator.getDist()/2, RobotContainer.m_PoseEstimator.getDist()/2, Units.degreesToRadians(30)));
       SmartDashboard.putString("pose from vision front ", pose3d.toPose2d().toString());
     }
 
@@ -304,7 +305,19 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.getState().speedMetersPerSecond,
     };
 
+
+    double commandedState[] = {
+    m_frontLeft.getDesiredState().speedMetersPerSecond,
+    m_frontRight.getDesiredState().speedMetersPerSecond,
+    m_rearLeft.getDesiredState().speedMetersPerSecond,
+    m_rearRight.getDesiredState().speedMetersPerSecond,
+    };
+
     SmartDashboard.putNumberArray("SwerveModuleStates", loggingState);
+    SmartDashboard.putNumberArray("SwerveModuleDESIREDStates", commandedState);
+
+
+
 
 
 

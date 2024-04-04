@@ -6,12 +6,16 @@ package frc.robot;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 
@@ -34,6 +38,10 @@ public final class Constants {
     public static boolean kDebugMode = false;
   }
   
+
+  public static final class VisionConstants {
+     private static final Vector<N3> STATE_STDS = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
+  }
 
   public static final class FieldMeasurements {
    public static Pose2d blueTarget = new Pose2d(0.5, 5.53, new Rotation2d(Units.degreesToRadians(180)));
@@ -82,7 +90,7 @@ public final class Constants {
     }
   }
   public static enum ShooterState {
-    STOPPED(0,0), SHOOTING(0.9,1), INTAKING(-0.6,-0.6),OUTTAKING(0.525,0.325), AMP(0.125,0.15), TRAP(0.35, 0.45);
+    STOPPED(0,0), IDLE(0.2, 0.2), SHOOTING(0.9,1), INTAKING(-0.6,-0.6),OUTTAKING(0.525,0.325), AMP(0.125,0.15), TRAP(0.35, 0.45);
 
     public final double lowSpeed;
     public final double highSpeed;

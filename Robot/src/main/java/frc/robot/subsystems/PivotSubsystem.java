@@ -222,13 +222,15 @@ public class PivotSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    double output = pivotPIDController.calculate(getPivotPosition(), this.goal);
     if (DebugConstants.kDebugMode) {
     SmartDashboard.putNumber("Pivot/Position", getPivotPosition());
     SmartDashboard.putNumber("Pivot/Test", 39585);
 
     SmartDashboard.putNumber("Pivot/Current 1", pivotMotor1.getOutputCurrent());
     SmartDashboard.putNumber("Pivot/Current 2", pivotMotor2.getOutputCurrent());
-    SmartDashboard.putNumber("Pivot/Output power", pivotPIDController.calculate(getPivotPosition(), this.goal));
+    SmartDashboard.putNumber("Pivot/Output power", output);
     SmartDashboard.putBoolean("Pivot/atsetpoint", pivotPIDController.atSetpoint());
     SmartDashboard.putNumber("Pivot/p", pivotPIDController.getP());
     SmartDashboard.putNumber("Pivot/d", pivotPIDController.getD());
@@ -245,7 +247,7 @@ public class PivotSubsystem extends SubsystemBase {
       gravConst = 0.026;
     }
 
-    setPivotPower((pivotPIDController.calculate(getPivotPosition(), this.goal))+(this.gravConst*Math.cos(getPivotPosition()-0.1)));
+    setPivotPower((output)+(this.gravConst*Math.cos(getPivotPosition()-0.1)));
   
   }
   @Override

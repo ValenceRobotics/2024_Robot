@@ -109,6 +109,10 @@ public class PoseEstimator extends SubsystemBase {
     public PhotonPipelineResult getLatestFront() {
       return camFront.getLatestResult();
     }
+
+    public double getDist() {
+      return getLatestFront().getBestTarget().getBestCameraToTarget().getTranslation().getNorm();
+    }
         public double getX(){
           return x;
         }

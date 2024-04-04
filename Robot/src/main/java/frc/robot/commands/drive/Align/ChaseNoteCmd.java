@@ -31,16 +31,14 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class ChaseNoteCmd extends Command {
 
-    private static final TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(5, 5);
-    private static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
-    private static final TrapezoidProfile.Constraints O_CONSTRAINTS = AutoConstants.kThetaControllerConstraints;
+    private static final TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(5, 10);
+    private static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(5, 10);
 
     //to configure
     private final Transform3d robotToCam = new Transform3d(new Translation3d(0.0157, -0.3708, 0.4064), new Rotation3d());
 
     private static final ProfiledPIDController xController = new ProfiledPIDController(1, 0, 0, X_CONSTRAINTS);
-    private static final ProfiledPIDController yController = new ProfiledPIDController(1, 0, 0, Y_CONSTRAINTS);
-    private static final ProfiledPIDController oController = new ProfiledPIDController(0.02, 0, 0.001, O_CONSTRAINTS);
+    private static final ProfiledPIDController oController = new ProfiledPIDController(1.5, 0, 0, Y_CONSTRAINTS);
     private double[] doubleArray = new double[0];
 
 
@@ -51,7 +49,7 @@ public class ChaseNoteCmd extends Command {
     private DoubleSupplier ySup;
     private DoubleSupplier xSup;
     private DoubleSupplier rotSup;
-    private Transform2d noteTransform;
+    //private Transform2d noteTransform;
 
 
   public ChaseNoteCmd(DriveSubsystem dt, IntakeFeederSubsystem intake, ShooterSubsystem shooter, PivotSubsystem pivot, DoubleSupplier xSup, DoubleSupplier ySup, DoubleSupplier rotSup) {
@@ -64,8 +62,7 @@ public class ChaseNoteCmd extends Command {
     this.rotSup = rotSup;
 
     xController.setTolerance(0.2);
-    yController.setTolerance(0.2);
-    oController.setTolerance(Units.degreesToRadians(3));
+    oController.setTolerance(0.05);
     addRequirements(m_dt, m_pivot, m_intakeFeeder, m_shooter);
   }
 
@@ -81,24 +78,24 @@ public class ChaseNoteCmd extends Command {
         double xDist = SmartDashboard.getNumberArray("Note 1 Position", doubleArray)[2];
         double yDist = -SmartDashboard.getNumberArray("Note 1 Position", doubleArray)[0];
 
-        if (xDist >= 2) {
+        // if (xDist >= 2) {
           m_pivot.setGoal(PivotConstants.kIntakePosition);
           m_intakeFeeder.setIntakeState(IntakeState.INTAKING);
           m_shooter.setShooterState(ShooterState.INTAKING);
-        } else {
-          m_pivot.setGoal(PivotConstants.kHomePosition);
-          m_intakeFeeder.setIntakeState(IntakeState.STOPPED);
-          m_shooter.setShooterState(ShooterState.STOPPED);
-        }
+        // } else {
+        //   m_pivot.setGoal(PivotConstants.kHomePosition);
+        //   m_intakeFeeder.setIntakeState(IntakeState.STOPPED);
+        //   m_shooter.setShooterState(ShooterState.STOPPED);
+        // }
 
         xDist += robotToCam.getX();
         yDist += robotToCam.getY();
 
-        noteTransform = new Transform2d(new Translation2d(xDist, yDist), new Rotation2d());
+        // noteTransform = new Transform2d(new Translation2d(xDist, yDist), new Rotation2d());
 
-        Pose2d drivePose = m_dt.getPose();
+        // Pose2d drivePose = m_dt.getPose();
         
-        Pose2d endDrivePose = drivePose.plus(noteTransform);
+        // Pose2d endDrivePose = drivePose.plus(noteTransform);
 
         
         
@@ -107,7 +104,7 @@ public class ChaseNoteCmd extends Command {
         // Translation2d newPose = new Translation2d(0,0);
         // double theta = noteTranslation.minus(newPose).getAngle().getDegrees();
 
-      m_dt.drive(-xController.calculate(xDist+0.3, 0), -yController.calculate(yDist, 0), 0, false, true);
+      m_dt.drive(-xController.calculate(xDist+0.1, 0), 0, -oController.calculate(yDist, 0), false, true);
 
        //m_dt.drive(-xController.calculate(endDrivePose.getX()-m_dt.getPose().getX(),0), -yController.calculate(endDrivePose.getY()-m_dt.getPose().getY(),0), 0, true, true);
 

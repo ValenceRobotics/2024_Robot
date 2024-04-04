@@ -18,7 +18,7 @@ import frc.robot.subsystems.PivotSubsystem;
 public class SetClimbRightPower extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ClimberSubsystem2 m_Climber;
-  private final double m_power;
+  private final DoubleSupplier m_power;
 
 
 
@@ -27,7 +27,7 @@ public class SetClimbRightPower extends Command {
    * 
    * @param subsystem The subsystem used by this command.
    */
-  public SetClimbRightPower(ClimberSubsystem2 climber, double power) {
+  public SetClimbRightPower(ClimberSubsystem2 climber, DoubleSupplier power) {
     this.m_Climber = climber;
     this.m_power = power;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -44,13 +44,13 @@ public class SetClimbRightPower extends Command {
   @Override
   public void execute() {
     
-    if (m_power == -1 && m_Climber.getExtendPosition() <= ClimberConstants.kMax2ExtendPosition) {
-      m_Climber.setClimbPower(0);
-    } else if (m_power == 1 && m_Climber.getExtendPosition() >= ClimberConstants.kMinExtendPosition) {
-      m_Climber.setClimbPower(0);
-    } else {
-    m_Climber.setClimbPower(m_power);
-    }
+    // if (m_power < 0 && m_Climber.getExtendPosition() <= ClimberConstants.kMax2ExtendPosition) {
+    //   m_Climber.setClimbPower(0);
+    // } else if (m_power > 0 && m_Climber.getExtendPosition() >= ClimberConstants.kMinExtendPosition) {
+    //   m_Climber.setClimbPower(0);
+    // } else {
+    m_Climber.setClimbPower(m_power.getAsDouble());
+  //  }
 
 
 
