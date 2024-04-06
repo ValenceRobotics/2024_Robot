@@ -26,36 +26,34 @@ import frc.robot.subsystems.IntakeFeederSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-
 public class ChaseNoteCmd extends Command {
 
-    private static final TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(5, 10);
-    private static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(5, 10);
+  private static final TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(5, 10);
+  private static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(5, 10);
 
-    //to configure
-    private final Transform3d robotToCam = new Transform3d(new Translation3d(0.0157, -0.3708, 0.4064), new Rotation3d());
+  // to configure
+  private final Transform3d robotToCam = new Transform3d(new Translation3d(0.0157, -0.3708, 0.4064), new Rotation3d());
 
-    private static final ProfiledPIDController xController = new ProfiledPIDController(1, 0, 0, X_CONSTRAINTS);
-    private static final ProfiledPIDController oController = new ProfiledPIDController(1.5, 0, 0, Y_CONSTRAINTS);
-    private double[] doubleArray = new double[3];
+  private static final ProfiledPIDController xController = new ProfiledPIDController(1, 0, 0, X_CONSTRAINTS);
+  private static final ProfiledPIDController oController = new ProfiledPIDController(1, 0, 0, Y_CONSTRAINTS);
+  private double[] doubleArray = new double[3];
 
+  private final DriveSubsystem m_dt;
+  private final IntakeFeederSubsystem m_intakeFeeder;
+  private final ShooterSubsystem m_shooter;
+  private final PivotSubsystem m_pivot;
+  private DoubleSupplier ySup;
+  private DoubleSupplier xSup;
+  private DoubleSupplier rotSup;
 
-    private final DriveSubsystem m_dt;
-    private final IntakeFeederSubsystem m_intakeFeeder;
-    private final ShooterSubsystem m_shooter;
-    private final PivotSubsystem m_pivot;
-    private DoubleSupplier ySup;
-    private DoubleSupplier xSup;
-    private DoubleSupplier rotSup;
+  private NetworkTable data;
 
-    private NetworkTable data;
+  DoubleSubscriber notesDetected;
+  DoubleArraySubscriber pos;
+  // private Transform2d noteTransform;
 
-    DoubleSubscriber notesDetected;
-    DoubleArraySubscriber pos;
-    //private Transform2d noteTransform;
-
-
-  public ChaseNoteCmd(DriveSubsystem dt, IntakeFeederSubsystem intake, ShooterSubsystem shooter, PivotSubsystem pivot, DoubleSupplier xSup, DoubleSupplier ySup, DoubleSupplier rotSup) {
+  public ChaseNoteCmd(DriveSubsystem dt, IntakeFeederSubsystem intake, ShooterSubsystem shooter, PivotSubsystem pivot,
+      DoubleSupplier xSup, DoubleSupplier ySup, DoubleSupplier rotSup) {
     this.m_dt = dt;
     this.m_intakeFeeder = intake;
     this.m_pivot = pivot;
@@ -70,83 +68,77 @@ public class ChaseNoteCmd extends Command {
   }
 
   @Override
-  public void initialize(){
+  public void initialize() {
     data = NetworkTableInstance.getDefault().getTable("SmartDashboard");
     notesDetected = data.getDoubleTopic("Notes Detected").subscribe(0.0);
-    pos = data.getDoubleArrayTopic("Note 1 Position").subscribe(new double[] {0,0,0});
-
-
+    pos = data.getDoubleArrayTopic("Note 1 Position").subscribe(new double[] { 0, 0, 0 });
 
   }
 
   @Override
   public void execute() {
 
-    if(Constants.DebugConstants.kDebugMode) {
-        SmartDashboard.putNumber("we got notes?", notesDetected.get());
-        SmartDashboard.putNumberArray("where da notes at?", pos.get());
+    if (Constants.DebugConstants.kDebugMode) {
+      SmartDashboard.putNumber("we got notes?", notesDetected.get());
+      SmartDashboard.putNumberArray("where da notes at?", pos.get());
     }
 
-   
     if (notesDetected.get() > 0) {
-        var poses = pos.get();
+      var poses = pos.get();
 
-        double xDist = poses[2];
-        double yDist = -poses[0];
+      double xDist = poses[2];
+      double yDist = -poses[0];
 
-        // if (xDist >= 2) {
-          m_pivot.setGoal(PivotConstants.kIntakePosition);
-          m_intakeFeeder.setIntakeState(IntakeState.INTAKING);
-          m_shooter.setShooterState(ShooterState.INTAKING);
-        // } else {
-        //   m_pivot.setGoal(PivotConstants.kHomePosition);
-        //   m_intakeFeeder.setIntakeState(IntakeState.STOPPED);
-        //   m_shooter.setShooterState(ShooterState.STOPPED);
-        // }
+      // if (xDist >= 2) {
+      m_pivot.setGoal(PivotConstants.kIntakePosition);
+      m_intakeFeeder.setIntakeState(IntakeState.INTAKING);
+      m_shooter.setShooterState(ShooterState.INTAKING);
+      // } else {
+      // m_pivot.setGoal(PivotConstants.kHomePosition);
+      // m_intakeFeeder.setIntakeState(IntakeState.STOPPED);
+      // m_shooter.setShooterState(ShooterState.STOPPED);
+      // }
 
-        xDist += robotToCam.getX();
-        yDist += robotToCam.getY();
+      xDist += robotToCam.getX();
+      yDist += robotToCam.getY();
 
-        // noteTransform = new Transform2d(new Translation2d(xDist, yDist), new Rotation2d());
+      // noteTransform = new Transform2d(new Translation2d(xDist, yDist), new
+      // Rotation2d());
 
-        // Pose2d drivePose = m_dt.getPose();
-        
-        // Pose2d endDrivePose = drivePose.plus(noteTransform);
+      // Pose2d drivePose = m_dt.getPose();
 
-        
-        
+      // Pose2d endDrivePose = drivePose.plus(noteTransform);
 
-        // Translation2d noteTranslation = new Translation2d(xDist, yDist);
-        // Translation2d newPose = new Translation2d(0,0);
-        // double theta = noteTranslation.minus(newPose).getAngle().getDegrees();
+      // Translation2d noteTranslation = new Translation2d(xDist, yDist);
+      // Translation2d newPose = new Translation2d(0,0);
+      // double theta = noteTranslation.minus(newPose).getAngle().getDegrees();
 
-      m_dt.drive(-xController.calculate(xDist, 0) , 0, -oController.calculate(yDist, 0), false, true);
+      m_dt.drive(-xController.calculate(xDist, 0), 0, -oController.calculate(yDist, 0), false, true);
 
-       //m_dt.drive(-xController.calculate(endDrivePose.getX()-m_dt.getPose().getX(),0), -yController.calculate(endDrivePose.getY()-m_dt.getPose().getY(),0), 0, true, true);
+      // m_dt.drive(-xController.calculate(endDrivePose.getX()-m_dt.getPose().getX(),0),
+      // -yController.calculate(endDrivePose.getY()-m_dt.getPose().getY(),0), 0, true,
+      // true);
 
-       
-        // double theta = (Units.degreesToRadians(270+m_dt.getPose().getRotation().getDegrees()));
+      // double theta =
+      // (Units.degreesToRadians(270+m_dt.getPose().getRotation().getDegrees()));
 
-        // double yAdjust = -yController.calculate(yDist);
-        // double xAdjust = Math.sin(theta) * yAdjust;
-        // yAdjust = Math.cos(theta) * yAdjust;
-        // m_dt.drive(xAdjust, yAdjust, rotSup.getAsDouble(), true, true);
+      // double yAdjust = -yController.calculate(yDist);
+      // double xAdjust = Math.sin(theta) * yAdjust;
+      // yAdjust = Math.cos(theta) * yAdjust;
+      // m_dt.drive(xAdjust, yAdjust, rotSup.getAsDouble(), true, true);
 
-        
     } else {
 
-        m_dt.drive(
-            applyJoystickTransform(xSup.getAsDouble()),
-             applyJoystickTransform(ySup.getAsDouble()), 
-             applyJoystickTransform(rotSup.getAsDouble()), 
-             true,
-             true
-            );
+      m_dt.drive(
+          applyJoystickTransform(xSup.getAsDouble()),
+          applyJoystickTransform(ySup.getAsDouble()),
+          applyJoystickTransform(rotSup.getAsDouble()),
+          true,
+          true);
+      m_pivot.setGoal(PivotConstants.kIntakePosition);
+      m_intakeFeeder.setIntakeState(IntakeState.INTAKING);
+      m_shooter.setShooterState(ShooterState.INTAKING);
     }
-
-
-    
-
 
   }
 
@@ -155,14 +147,13 @@ public class ChaseNoteCmd extends Command {
     return false;
   }
 
-
   public double applyJoystickTransform(double raw) {
-    if(m_dt.getSlowMode()) {
-      return 0.4*raw;
+    if (m_dt.getSlowMode()) {
+      return 0.4 * raw;
     }
 
-    //raw = 0.7*raw + 0.3*(Math.pow(raw, 3));
-    //return raw/1.25;
+    // raw = 0.7*raw + 0.3*(Math.pow(raw, 3));
+    // return raw/1.25;
     return raw;
   }
 }

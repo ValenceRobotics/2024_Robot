@@ -43,15 +43,14 @@ public class SetClimbRightPower extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    // if (m_power < 0 && m_Climber.getExtendPosition() <= ClimberConstants.kMax2ExtendPosition) {
-    //   m_Climber.setClimbPower(0);
-    // } else if (m_power > 0 && m_Climber.getExtendPosition() >= ClimberConstants.kMinExtendPosition) {
-    //   m_Climber.setClimbPower(0);
-    // } else {
+    SmartDashboard.putNumber("Climber/ power", m_power.getAsDouble());
+    if (m_power.getAsDouble() < 0 && m_Climber.getExtendPosition() <= ClimberConstants.kMax2ExtendPosition) {
+      m_Climber.setClimbPower(0);
+    } else if (m_power.getAsDouble() > 0 && m_Climber.getExtendPosition() >= ClimberConstants.kMinExtendPosition) {
+      m_Climber.setClimbPower(0);
+    } else {
     m_Climber.setClimbPower(m_power.getAsDouble());
-  //  }
-
+ }
 
 
 

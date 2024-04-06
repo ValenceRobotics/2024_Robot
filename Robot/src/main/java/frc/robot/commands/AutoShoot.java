@@ -34,7 +34,7 @@ public class AutoShoot extends Command {
 
   @Override
   public void execute() {
-   if (m_shooter.getTopVelocity() > 6100 && m_shooter.getBottomVelocity() > 5500) {
+   if (m_shooter.getTopVelocity() > 6100 && m_shooter.getBottomVelocity() > 5000) {
     m_feeder.setIntakeState(IntakeState.SHOOTING);
    } else {
     m_feeder.setIntakeState(IntakeState.STOPPED);

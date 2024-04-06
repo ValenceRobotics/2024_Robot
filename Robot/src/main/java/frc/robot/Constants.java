@@ -50,8 +50,8 @@ public final class Constants {
    public static Pose2d blueLineupSub = new Pose2d(1.36, 5.53, new Rotation2d(Units.degreesToRadians(180)));
    public static Pose2d redLineupSub =  new Pose2d(15.18, 5.53, new Rotation2d(Units.degreesToRadians(0)));
 
-   public static Pose2d blueLineupAmp = new Pose2d(1.81, 7.65, new Rotation2d(Units.degreesToRadians(90)));
-   public static Pose2d redLineupAmp =  new Pose2d(14.7, 7.65, new Rotation2d(Units.degreesToRadians(90)));
+   public static Pose2d blueLineupAmp = new Pose2d(1.82, 7.66, new Rotation2d(Units.degreesToRadians(90)));
+   public static Pose2d redLineupAmp =  new Pose2d(14.7, 7.67, new Rotation2d(Units.degreesToRadians(90)));
 
 
 
@@ -72,7 +72,7 @@ public final class Constants {
     public static final double kMax1ExtendPosition = -210.41;
     public static final double kMax2ExtendPosition = -206.76;
 
-    public static final double kMinExtendPosition = 0;
+    public static final double kMinExtendPosition = 1000000;
    }
 
   public static class IntakeFeederConstants {
@@ -195,7 +195,7 @@ public final class Constants {
     public static final double kTurningEncoderPositionPIDMinInput = 0; // radians
     public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
 
-    public static final double kDrivingP = 0.24;
+    public static final double kDrivingP = 0.22;
     public static final double kDrivingI = 0;
     public static final double kDrivingD = 0;
     public static final double kDrivingFF = 1 / kDriveWheelFreeSpeedRps;

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.74,
+      "x": 0.71,
       "y": 4.41
     },
-    "rotation": 121.18421712449268
+    "rotation": -60.485404590611786
   },
   "command": {
     "type": "sequential",
@@ -14,31 +14,31 @@
         {
           "type": "named",
           "data": {
-            "name": "shootUpClose"
+            "name": "giveBackshot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_1"
+            "pathName": "BLUESIDEPATH_1_B"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_2"
+            "pathName": "BLUESIDEPATH_2_B"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootUpClose"
+            "name": "giveBackshot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_3"
+            "pathName": "BLUESIDEPATH_3_B"
           }
         },
         {
@@ -50,13 +50,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_4"
+            "pathName": "BLUESIDEPATH_4_B"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootUpClose"
+            "name": "giveBackshot"
           }
         }
       ]

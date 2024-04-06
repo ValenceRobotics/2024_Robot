@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -15,6 +18,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 public class PoseEstimator extends SubsystemBase {
     private AprilTagFieldLayout layout;
@@ -37,6 +41,8 @@ public class PoseEstimator extends SubsystemBase {
     private double y;
     private double z;
     private Rotation2d heading;
+    private Optional<EstimatedRobotPose> visionPoseFront;
+    private PhotonPipelineResult recentPipelineResult;
 
 
     public PoseEstimator() {
@@ -77,6 +83,18 @@ public class PoseEstimator extends SubsystemBase {
       return poseEstimatorFront;
     }
 
+    public Optional<EstimatedRobotPose> getVisionPoseFront() {
+      return this.visionPoseFront;
+    }
+
+    public boolean canSeeTarget() {
+      var a = getLatestFront();
+      if(a!=null) {
+      return getLatestFront().hasTargets();
+      }
+      return false;
+    }
+
     // public PhotonPoseEstimator getEstimatorBack(){
     //   return poseEstimatorBack;
     // }
@@ -107,10 +125,27 @@ public class PoseEstimator extends SubsystemBase {
     }
       
     public PhotonPipelineResult getLatestFront() {
-      return camFront.getLatestResult();
+      return recentPipelineResult;
+    }
+
+    public void updatePoseEstimator() {
+      var bruh = RobotContainer.m_PoseEstimator.getEstimatorFront();
+   // var rearPoseEstimator = RobotContainer.m_PoseEstimator.getEstimatorBack();
+      // visionPoseFront = bruh.update();
+      PhotonPipelineResult cameraResult = camFront.getLatestResult();
+
+      visionPoseFront =  bruh.update(cameraResult, camFront.getCameraMatrix(), camFront.getDistCoeffs());
+
+      recentPipelineResult = cameraResult;
+
     }
 
     public double getDist() {
+      var a = getLatestFront();
+      if(a == null || !a.hasTargets()){
+        return 10; 
+      }
+      
       return getLatestFront().getBestTarget().getBestCameraToTarget().getTranslation().getNorm();
     }
         public double getX(){

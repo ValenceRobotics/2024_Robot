@@ -58,9 +58,9 @@ public class AlignToAmp extends Command {
     private static final TrapezoidProfile.Constraints O_CONSTRAINTS = AutoConstants.kThetaControllerConstraints;
 
     //to configure
-    private static final ProfiledPIDController xController = new ProfiledPIDController(0.25, 0, 0, X_CONSTRAINTS);
-    private static final ProfiledPIDController yController = new ProfiledPIDController(0.25, 0, 0, Y_CONSTRAINTS);
-    private static final PIDController oController = new PIDController(0.025, 0, 0.001);
+    private static final ProfiledPIDController xController = new ProfiledPIDController(0.32, 0, 0, X_CONSTRAINTS);
+    private static final ProfiledPIDController yController = new ProfiledPIDController(0.32, 0, 0, Y_CONSTRAINTS);
+    private static final PIDController oController = new PIDController(0.032, 0, 0.001);
     private double currentAngle;
     
 

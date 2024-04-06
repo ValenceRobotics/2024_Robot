@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.74,
-      "y": 4.41
+      "x": 0.7612792476769773,
+      "y": 4.415901154077189
     },
-    "rotation": 121.18421712449268
+    "rotation": -60.10109816138547
   },
   "command": {
     "type": "sequential",
@@ -14,54 +14,48 @@
         {
           "type": "named",
           "data": {
-            "name": "shootUpClose"
+            "name": "giveBackshot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_1"
+            "pathName": "preDC1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_2"
+            "pathName": "preDC2"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootUpClose"
+            "name": "shootDistance"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intakeStop"
+            "pathName": "preDC3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BLUESIDEPATH_4"
+            "pathName": "preDC4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootUpClose"
+            "name": "giveBackshot"
           }
         }
       ]
     }
   },
-  "folder": "CloseAndCenterLine",
+  "folder": "CenterLineOnly",
   "choreoAuto": false
 }

@@ -159,7 +159,7 @@ public class DriveSubsystem extends SubsystemBase {
             this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     //TO CONFIGURE
-                    new PIDConstants(8, 0, 0), // Translation PID constants Neoprene: 8, 0, 0
+                    new PIDConstants(6, 0, 0), // Translation PID constants Neoprene: 8, 0, 0
                     new PIDConstants(5, 0.0, 0.0), // Rotation PID constants
     5.7, // Max module speed, in m/s
                     Units.inchesToMeters(18.7383297), // Drive base radius in meters. Distance from robot center to furthest module.
@@ -208,19 +208,29 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Update the odometry in the periodic block
 
-    var bruh = RobotContainer.m_PoseEstimator.getEstimatorFront();
-   // var rearPoseEstimator = RobotContainer.m_PoseEstimator.getEstimatorBack();
-    var visionPoseFront = bruh.update();
+  //   var bruh = RobotContainer.m_PoseEstimator.getEstimatorFront();
+  //  // var rearPoseEstimator = RobotContainer.m_PoseEstimator.getEstimatorBack();
+  //   var visionPoseFront = bruh.update();
    // var visionPoseBack = rearPoseEstimator.update();
-    if(visionPoseFront.isPresent()) {
+
+   RobotContainer.m_PoseEstimator.updatePoseEstimator();
+    var visionPoseFront = RobotContainer.m_PoseEstimator.getVisionPoseFront();
+
+    if(visionPoseFront!=null && visionPoseFront.isPresent() && RobotContainer.m_PoseEstimator.canSeeTarget()) {
       var huh = visionPoseFront.get();
       Pose3d pose3d = huh.estimatedPose;
 
+      var savedDist = RobotContainer.m_PoseEstimator.getDist();
+
       if(DebugConstants.kDebugMode) {
-        SmartDashboard.putNumber("std-dev used distance",RobotContainer.m_PoseEstimator.getDist());
+        SmartDashboard.putNumber("std-dev used distance", savedDist);
       }
 
-      m_odometry.addVisionMeasurement(pose3d.toPose2d(), huh.timestampSeconds, VecBuilder.fill(RobotContainer.m_PoseEstimator.getDist()/2, RobotContainer.m_PoseEstimator.getDist()/2, Units.degreesToRadians(20)));
+      if(savedDist < 6.7) {
+        m_odometry.addVisionMeasurement(pose3d.toPose2d(), huh.timestampSeconds, VecBuilder.fill(savedDist/2, savedDist/2, Units.degreesToRadians(20)));
+
+      }
+
       SmartDashboard.putString("pose from vision front ", pose3d.toPose2d().toString());
     }
 
@@ -304,8 +314,8 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Drivetrain/Gyro", m_gyro.getRotation2d().getDegrees());
 
     double loggingState[] = {
-    m_frontLeft.getState().speedMetersPerSecond,
-    m_frontLeft.getDesiredState().speedMetersPerSecond
+    Math.IEEEremainder(m_frontLeft.getState().angle.getDegrees(),360)+180,
+    Math.IEEEremainder(m_frontLeft.getDesiredState().angle.getDegrees(),360),
      //m_frontRight.getState().speedMetersPerSecond,
    //m_rearLeft.getState().speedMetersPerSecond,
     //m_rearRight.getState().speedMetersPerSecond,
@@ -371,10 +381,13 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
 
-   // m_gyro.setYaw(180 + pose.getRotation().getDegrees() );
+    var iable = pose.getRotation();
+    iable = RobotContainer.isRed ? iable : iable.unaryMinus();
+
+   m_gyro.setYaw(iable.getDegrees());
 
     m_odometry.resetPosition(
-      m_gyro.getRotation2d(),
+      iable,
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),

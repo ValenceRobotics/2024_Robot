@@ -217,28 +217,28 @@ public class RobotContainer {
     //                         OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_driverController.getRawAxis(0),
     //                         OIConstants.kDriveDeadband)));
 
-    m_xboxDriveController.y().onTrue(new SnapToDirection(m_robotDrive, 0, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
-                             OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
-                             OIConstants.kDriveDeadband)));
+    // m_xboxDriveController.y().onTrue(new SnapToDirection(m_robotDrive, 0, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
+    //                          OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
+    //                          OIConstants.kDriveDeadband)));
 
-     m_xboxDriveController.b().onTrue(new SnapToDirection(m_robotDrive, 270, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
-                             OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
-                             OIConstants.kDriveDeadband)));
+    //  m_xboxDriveController.b().onTrue(new SnapToDirection(m_robotDrive, 270, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
+    //                          OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
+    //                          OIConstants.kDriveDeadband)));
     
-     m_xboxDriveController.a().onTrue(new SnapToDirection(m_robotDrive, 180, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
-                             OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
-                             OIConstants.kDriveDeadband)));
+    //  m_xboxDriveController.a().onTrue(new SnapToDirection(m_robotDrive, 180, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
+    //                          OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
+    //                          OIConstants.kDriveDeadband)));
 
-     m_xboxDriveController.x().onTrue(new SnapToDirection(m_robotDrive, 90, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
-                             OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
-                             OIConstants.kDriveDeadband)));
+    //  m_xboxDriveController.x().onTrue(new SnapToDirection(m_robotDrive, 90, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
+    //                          OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
+    //                          OIConstants.kDriveDeadband)));
 
 
     // new JoystickButton(m_driverController,2)
     // .whileTrue(new SetSlowMode(m_robotDrive, true))
     // .whileFalse(new SetSlowMode(m_robotDrive, false));
 
-    m_xboxDriveController.button(9)
+    m_xboxDriveController.rightBumper()
       .whileTrue(new SetSlowMode(m_robotDrive, true))
       .whileFalse(new SetSlowMode(m_robotDrive, false));
 
@@ -279,7 +279,7 @@ public class RobotContainer {
     
     m_OperatorController.button(10).whileTrue(new SetMechanismState(ShooterState.TRAP)).onFalse(new SetMechanismState(ShooterState.STOPPED));
 
-    
+    m_OperatorController.b().whileTrue(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kSubwooferShot).alongWith(new SetMechanismState(IntakeState.OUTTAKING, ShooterState.OUTTAKING))).onFalse(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).alongWith(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED)));
 
     // m_OperatorController.a().whileTrue(m_Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     // m_OperatorController.b().whileTrue(m_Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
@@ -293,10 +293,13 @@ public class RobotContainer {
                             OIConstants.kDriveDeadband))))).alongWith(new AutoShoot(m_Shooter, m_IntakeFeederSubsystem))).onFalse(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).alongWith(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED)));
 
                             
+    m_xboxDriveController.x().whileTrue(((Commands.run(() -> m_PivotSubsystem.setGoal(m_robotDrive.calcPivotAngle()))).alongWith((new AlignToTarget(m_robotDrive, () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(1),
+                            OIConstants.kDriveDeadband), () -> -MathUtil.applyDeadband(m_xboxDriveController.getRawAxis(0),
+                            OIConstants.kDriveDeadband))))).alongWith(new AutoShoot(m_Shooter, m_IntakeFeederSubsystem))).onFalse(new SetPivotPosition(m_PivotSubsystem, PivotConstants.kHomePosition).alongWith(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED)));
 
 
 
-    m_OperatorController.y().whileTrue(new AlignToAmp(m_robotDrive));
+    m_xboxDriveController.y().whileTrue(new AlignToAmp(m_robotDrive));
   // new JoystickButton(m_driverController, 8).whileTrue(new AlignToAmp(m_robotDrive));
 
     // // SmartDashboard.putNumber("test pivot loc", PivotConstants.kHomePosition);
