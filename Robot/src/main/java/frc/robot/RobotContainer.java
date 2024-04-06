@@ -9,7 +9,7 @@ import java.util.List;
 import com.ctre.phoenix6.unmanaged.Unmanaged;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
+
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
@@ -144,7 +144,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("giveBackshot", (new SetPivotPosition(m_PivotSubsystem, PivotConstants.kBackshotPosition).withTimeout(0.01))
                                              .andThen(new SetMechanismState( ShooterState.SHOOTING))
-                                            .andThen(new WaitCommand(1))
+                                            .andThen(new WaitCommand(0.5))
                                             .andThen(new SetMechanismState(IntakeState.SHOOTING))
                                             .andThen(new WaitCommand(0.5))
                                               .andThen(new SetMechanismState(IntakeState.STOPPED, ShooterState.STOPPED))
