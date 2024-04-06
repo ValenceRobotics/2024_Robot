@@ -1,0 +1,73 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7478066682815552,
+      "y": 4.397525787353516
+    },
+    "rotation": -60.088430854477686
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "giveBackshot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreD1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreAndED4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootDistance"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreAndEDC5.1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreAndEDC6.1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootDistance"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "intakeB"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shootB"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "CenterLineOnly",
+  "choreoAuto": true
+}
