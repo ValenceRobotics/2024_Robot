@@ -215,39 +215,44 @@ public class DriveSubsystem extends SubsystemBase {
     if(visionPoseFront.isPresent()) {
       var huh = visionPoseFront.get();
       Pose3d pose3d = huh.estimatedPose;
-      m_odometry.addVisionMeasurement(pose3d.toPose2d(), huh.timestampSeconds, VecBuilder.fill(RobotContainer.m_PoseEstimator.getDist()/2, RobotContainer.m_PoseEstimator.getDist()/2, Units.degreesToRadians(30)));
+
+      if(DebugConstants.kDebugMode) {
+        SmartDashboard.putNumber("std-dev used distance",RobotContainer.m_PoseEstimator.getDist());
+      }
+
+      m_odometry.addVisionMeasurement(pose3d.toPose2d(), huh.timestampSeconds, VecBuilder.fill(RobotContainer.m_PoseEstimator.getDist()/2, RobotContainer.m_PoseEstimator.getDist()/2, Units.degreesToRadians(20)));
       SmartDashboard.putString("pose from vision front ", pose3d.toPose2d().toString());
     }
 
-    if (SmartDashboard.getNumber("Tags Detected",0) > 0) {
-      Transform3d robotToCam = new Transform3d(new Translation3d(0.0157, -0.3708, 0.4064), new Rotation3d());
+    // if (SmartDashboard.getNumber("Tags Detected",0) > 0) {
+    //   Transform3d robotToCam = new Transform3d(new Translation3d(0.0157, -0.3708, 0.4064), new Rotation3d());
 
-      double poseX = SmartDashboard.getNumber("vision_x",0);
-      double poseY = SmartDashboard.getNumber("vision_y",0);
-      double poseZ = SmartDashboard.getNumber("vision_z",0);
-      double posePitch = SmartDashboard.getNumber("vision_pitch",0);
-      double poseRoll = SmartDashboard.getNumber("vision_Roll",0);
-      double poseYaw = SmartDashboard.getNumber("vision_yaw",0);
-      poseYaw -= Units.degreesToRadians(270);
+    //   double poseX = SmartDashboard.getNumber("vision_x",0);
+    //   double poseY = SmartDashboard.getNumber("vision_y",0);
+    //   double poseZ = SmartDashboard.getNumber("vision_z",0);
+    //   double posePitch = SmartDashboard.getNumber("vision_pitch",0);
+    //   double poseRoll = SmartDashboard.getNumber("vision_Roll",0);
+    //   double poseYaw = SmartDashboard.getNumber("vision_yaw",0);
+    //   poseYaw -= Units.degreesToRadians(270);
 
-      double xOffset = -0.0157;
-      double yOffset = 0.3708;
-      double zOffset = -0.4064;
+    //   double xOffset = -0.0157;
+    //   double yOffset = 0.3708;
+    //   double zOffset = -0.4064;
 
-      double robotX = poseX+(xOffset*Math.cos(poseYaw)-yOffset*Math.sin(poseYaw));
-      double robotY = poseY+(xOffset*Math.sin(poseYaw)+yOffset*Math.cos(poseYaw));
-      double robotZ = poseZ+zOffset;
+    //   double robotX = poseX+(xOffset*Math.cos(poseYaw)-yOffset*Math.sin(poseYaw));
+    //   double robotY = poseY+(xOffset*Math.sin(poseYaw)+yOffset*Math.cos(poseYaw));
+    //   double robotZ = poseZ+zOffset;
 
-      Pose3d oakPose = new Pose3d(poseX, poseY, poseZ, new Rotation3d(poseRoll, posePitch, poseYaw));
+    //   Pose3d oakPose = new Pose3d(poseX, poseY, poseZ, new Rotation3d(poseRoll, posePitch, poseYaw));
 
-      //oakPose = oakPose.plus(robotToCam.inverse());
+    //   //oakPose = oakPose.plus(robotToCam.inverse());
 
 
-      SmartDashboard.putString("Oak pose",  oakPose.toPose2d().toString());
+    //   SmartDashboard.putString("Oak pose",  oakPose.toPose2d().toString());
 
-    }else{
-      SmartDashboard.putString("Oak pose", (new Pose2d()).toString());
-    }
+    // }else{
+    //   SmartDashboard.putString("Oak pose", (new Pose2d()).toString());
+    // }
 
 
     // if (visionPoseBack.isPresent()) {
@@ -300,21 +305,22 @@ public class DriveSubsystem extends SubsystemBase {
 
     double loggingState[] = {
     m_frontLeft.getState().speedMetersPerSecond,
-     m_frontRight.getState().speedMetersPerSecond,
-   m_rearLeft.getState().speedMetersPerSecond,
-    m_rearRight.getState().speedMetersPerSecond,
+    m_frontLeft.getDesiredState().speedMetersPerSecond
+     //m_frontRight.getState().speedMetersPerSecond,
+   //m_rearLeft.getState().speedMetersPerSecond,
+    //m_rearRight.getState().speedMetersPerSecond,
     };
 
 
     double commandedState[] = {
-    m_frontLeft.getDesiredState().speedMetersPerSecond,
-    m_frontRight.getDesiredState().speedMetersPerSecond,
-    m_rearLeft.getDesiredState().speedMetersPerSecond,
-    m_rearRight.getDesiredState().speedMetersPerSecond,
+    m_frontLeft.getDesiredState().speedMetersPerSecond
+   // m_frontRight.getDesiredState().speedMetersPerSecond,
+   // m_rearLeft.getDesiredState().speedMetersPerSecond,
+   // m_rearRight.getDesiredState().speedMetersPerSecond,
     };
 
     SmartDashboard.putNumberArray("SwerveModuleStates", loggingState);
-    SmartDashboard.putNumberArray("SwerveModuleDESIREDStates", commandedState);
+   // SmartDashboard.putNumberArray("SwerveModuleDESIREDStates", commandedState);
 
 
 

@@ -6,20 +6,18 @@ package frc.robot.commands.drive.Align;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants;
 import frc.robot.Constants.IntakeState;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.ShooterState;
@@ -39,7 +37,7 @@ public class ChaseNoteCmd extends Command {
 
     private static final ProfiledPIDController xController = new ProfiledPIDController(1, 0, 0, X_CONSTRAINTS);
     private static final ProfiledPIDController oController = new ProfiledPIDController(1.5, 0, 0, Y_CONSTRAINTS);
-    private double[] doubleArray = new double[0];
+    private double[] doubleArray = new double[3];
 
 
     private final DriveSubsystem m_dt;
@@ -49,6 +47,11 @@ public class ChaseNoteCmd extends Command {
     private DoubleSupplier ySup;
     private DoubleSupplier xSup;
     private DoubleSupplier rotSup;
+
+    private NetworkTable data;
+
+    DoubleSubscriber notesDetected;
+    DoubleArraySubscriber pos;
     //private Transform2d noteTransform;
 
 
@@ -68,15 +71,28 @@ public class ChaseNoteCmd extends Command {
 
   @Override
   public void initialize(){
+    data = NetworkTableInstance.getDefault().getTable("SmartDashboard");
+    notesDetected = data.getDoubleTopic("Notes Detected").subscribe(0.0);
+    pos = data.getDoubleArrayTopic("Note 1 Position").subscribe(new double[] {0,0,0});
+
 
 
   }
 
   @Override
   public void execute() {
-    if (SmartDashboard.getNumber("Notes Detected", 0) > 0) {
-        double xDist = SmartDashboard.getNumberArray("Note 1 Position", doubleArray)[2];
-        double yDist = -SmartDashboard.getNumberArray("Note 1 Position", doubleArray)[0];
+
+    if(Constants.DebugConstants.kDebugMode) {
+        SmartDashboard.putNumber("we got notes?", notesDetected.get());
+        SmartDashboard.putNumberArray("where da notes at?", pos.get());
+    }
+
+   
+    if (notesDetected.get() > 0) {
+        var poses = pos.get();
+
+        double xDist = poses[2];
+        double yDist = -poses[0];
 
         // if (xDist >= 2) {
           m_pivot.setGoal(PivotConstants.kIntakePosition);
@@ -104,7 +120,7 @@ public class ChaseNoteCmd extends Command {
         // Translation2d newPose = new Translation2d(0,0);
         // double theta = noteTranslation.minus(newPose).getAngle().getDegrees();
 
-      m_dt.drive(-xController.calculate(xDist+0.1, 0), 0, -oController.calculate(yDist, 0), false, true);
+      m_dt.drive(-xController.calculate(xDist, 0) , 0, -oController.calculate(yDist, 0), false, true);
 
        //m_dt.drive(-xController.calculate(endDrivePose.getX()-m_dt.getPose().getX(),0), -yController.calculate(endDrivePose.getY()-m_dt.getPose().getY(),0), 0, true, true);
 
