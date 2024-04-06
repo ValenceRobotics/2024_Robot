@@ -1,0 +1,79 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3594470550052216,
+      "y": 5.591252975098542
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "giveBackshot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterSubToLeftNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftNoteToCenterSub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "giveBackshot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterSubtoA"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AtoCenterSub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "giveBackshot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterSubToMidNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MidNoteToCenterSub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "giveBackshot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "CloseAndCenterLine",
+  "choreoAuto": false
+}

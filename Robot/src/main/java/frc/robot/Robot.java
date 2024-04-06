@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathfindingCommand;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -14,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.IntakeState;
 import frc.robot.Constants.ShooterState;
 import frc.robot.commands.Manipulator.SetMechanismState;
+import com.pathplanner.lib.commands.FollowPathCommand;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to

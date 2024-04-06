@@ -367,7 +367,7 @@
       "command": {
         "type": "named",
         "data": {
-          "name": "stopIntake"
+          "name": "intakeStop"
         }
       }
     }
